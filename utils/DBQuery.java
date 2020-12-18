@@ -183,4 +183,34 @@ public class DBQuery {
         return false;
     }
 
+    // DELETE ----------------------------------------------------------------------------------------------------------b
+    public static boolean removeAppointment(Appointment appointment){
+        System.out.println("Attempting to remove appointment object from database: " + appointment);
+        Connection conn = DBConnection.startConnection();
+
+        try(PreparedStatement ps = conn.prepareStatement("DELETE FROM appointments WHERE Appointment_ID = ?")){
+
+            ps.setInt(1, appointment.getAppointmentId());
+
+            int rs = ps.executeUpdate();
+            if(rs > 0){
+                System.out.println("Appointment ID# " + appointment.getAppointmentId() + " was removed successfully.");
+                DBConnection.closeConnection();
+                return true;
+            }
+            else {
+                System.out.println("Alert: Appointment ID# " + appointment.getAppointmentId() + " removal was unsuccessful!.");
+                DBConnection.closeConnection();
+                return false;
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("SQL Error (removeAppointment): " + e.getMessage());
+            DBConnection.closeConnection();
+        }
+        DBConnection.closeConnection();
+        return false;
+    }
+
 }

@@ -15,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import utils.LanguageHandler;
 
 import java.io.IOException;
 import java.net.URL;
@@ -79,6 +80,13 @@ public class MainViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         loadAppointmentView();
+
+        appointmentButton.setText(LanguageHandler.getLocaleString("Appointments"));
+        customerButton.setText(LanguageHandler.getLocaleString("main_Customers"));
+        contactButton.setText(LanguageHandler.getLocaleString("Contacts"));
+        exitButton.setText(LanguageHandler.getLocaleString("exit"));
+        logoutButton.setText(LanguageHandler.getLocaleString("Logout"));
+
         // Mouse events to move the window.
         anchorContainer.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override

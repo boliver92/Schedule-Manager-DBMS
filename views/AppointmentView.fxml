@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1170.0" stylesheets="@resources/styles/stylesheet.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.AppointmentViewController">
    <children>
       <TableView fx:id="appointmentViewTable" layoutX="14.0" layoutY="123.0" prefHeight="626.0" prefWidth="1130.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #2193b0, #6dd5ed);" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
@@ -86,7 +85,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="deleteButton" mnemonicParsing="false" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Delete">
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteButtonOnClick" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Delete">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>

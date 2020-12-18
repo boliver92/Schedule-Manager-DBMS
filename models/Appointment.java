@@ -2,18 +2,32 @@ package models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import utils.DBQuery;
 
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.TimeZone;
 
 public class Appointment {
 
     // Static Variables
     private static ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
+    private static SortedList<Appointment> appointmentSortedList = new SortedList<>(appointmentList, (o1, o2) -> {
+        if(o1.getStart().isBefore(o2.getStart())){
+            return -1;
+        }
+        else if(o1.getStart().isAfter(o2.getStart())){
+            return 1;
+        }
+        return 0;
+    });
+    private static FilteredList<Appointment>  appointmentFilteredList = new FilteredList<>(appointmentSortedList, s -> true);
     // Instance variables
 
     private int appointmentId;
@@ -66,6 +80,27 @@ public class Appointment {
 
 
     // Static Methods
+    public static SortedList<Appointment> getAppointmentSortedList() {
+        return appointmentSortedList;
+    }
+
+    public static FilteredList<Appointment> getAppointmentFilteredList() {
+        return appointmentFilteredList;
+    }
+
+    public static boolean removeAppointment(Appointment appointment) {
+        if (DBQuery.removeAppointment(appointment)) {
+            if (appointmentList.remove(appointment)) {
+                System.out.println("The appointment was successfully removed from the appointmentList");
+                return true;
+            }
+        } else {
+            System.out.println("Error ( Appointment.removeAppointment() ) : The appointment was not removed from the " +
+                    "appointmentList");
+            return false;
+        }
+        return false;
+    }
 
     /**
      * Takes an appointment object as an input and adds it to the appointmentList. This is required to keep the object
@@ -156,6 +191,7 @@ public class Appointment {
     public String getTitle() {
         return title;
     }
+
 
     @Override
     public String toString() {

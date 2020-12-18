@@ -45,7 +45,7 @@ public class Main extends Application {
         DBQuery.loadCustomers();
         DBQuery.loadContacts();
         DBQuery.loadAppointments();
-        LanguageHandler.setupLanguageHandler();
+        LanguageHandler.setupLanguageHandler(new Locale("fr"));
         User.setUserLocation();
 
         // Load main FXML
