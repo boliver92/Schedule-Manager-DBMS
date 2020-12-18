@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane fx:id="anchorContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainViewController">
+   <children>
+      <Pane prefHeight="768.0" prefWidth="200.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #2193b0, #6dd5ed);">
+         <children>
+            <VBox prefHeight="768.0" prefWidth="206.0">
+               <children>
+                  <AnchorPane prefHeight="187.0" prefWidth="206.0">
+                     <children>
+                        <Label fx:id="titleLabel" alignment="CENTER" layoutY="31.0" prefHeight="131.0" prefWidth="200.0" style="-fx-text-fill: #dfe6e9;" text="Schedule Manager" textAlignment="CENTER" wrapText="true">
+                           <font>
+                              <Font name="Rockwell" size="24.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </AnchorPane>
+                  <Button fx:id="appointmentButton" mnemonicParsing="false" onAction="#appointmentButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #6dd5ed;" text="Appointments">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="customerButton" mnemonicParsing="false" onAction="#customerButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #6dd5ed;" text="Customers">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin>
+                  </Button>
+                  <Button fx:id="contactButton" mnemonicParsing="false" onAction="#contactButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #6dd5ed;" text="Contacts">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin>
+                  </Button>
+                  <HBox prefHeight="48.0" prefWidth="206.0">
+                     <children>
+                        <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logoutButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="101.0" style="-fx-background-color: #6dd5ed;" text="Logout">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <HBox.margin>
+                              <Insets right="1.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="97.0" style="-fx-background-color: #6dd5ed;" text="Exit">
+                           <font>
+                              <Font name="System Bold" size="18.0" />
+                           </font>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <HBox.margin>
+                              <Insets left="1.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+         <effect>
+            <DropShadow />
+         </effect>
+      </Pane>
+      <AnchorPane fx:id="subAnchorContainer" layoutX="200.0" prefHeight="768.0" prefWidth="1164.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="206.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+   </children>
+</AnchorPane>
