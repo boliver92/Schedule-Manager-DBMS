@@ -1,23 +1,32 @@
 package controllers;
 
+import ScheduleManager.Main;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import models.Appointment;
 import models.Contact;
 import utils.LanguageHandler;
 import views.resources.styles.Colors;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class AppointmentViewController implements Initializable{
 
-    private Appointment selectedAppointment;
+    private static Appointment selectedAppointment;
+    private static Stage popupStage;
 
     @FXML
     private TableView<Appointment> appointmentViewTable;
@@ -73,12 +82,30 @@ public class AppointmentViewController implements Initializable{
 
     }
 
+     */
+
     @FXML
     void updateButtonOnClick(ActionEvent event) {
-
+        if(getSelectedAppointment() == null){
+            appointmentViewMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
+            appointmentViewMessageLabel.setText(LanguageHandler.getLocaleString("Select an appointment to be updated"));
+        } else {
+            appointmentViewMessageLabel.setText("");
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("../views/UpdateAppointmentView.fxml"));
+                popupStage = new Stage();
+                popupStage.initStyle(StageStyle.UNDECORATED);
+                popupStage.initOwner(Main.getpStage());
+                popupStage.initModality(Modality.WINDOW_MODAL);
+                popupStage.setScene(new Scene(root));
+                popupStage.show();
+            } catch (IOException e){
+                e.printStackTrace();
+                System.out.println("Error ( AppointmentViewController.updateButtonOnClick() ): " + e.getMessage());
+            }
+        }
     }
 
-     */
 
     /**
      * Removes the class's selectedAppointment object from the appointmentList and database table.
@@ -168,16 +195,32 @@ public class AppointmentViewController implements Initializable{
         appointmentViewTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, appointment, newSelection) -> setSelectedAppointment(newSelection) ));
     }
 
+    // SETTERS----------------------------------------------------------------------------------------------------------
+
     /**
      * Assigns the selected appointment in the appointmentTableView to the instance's selectedAppointment variable.
      * @param appointment   The appointment to be assigned.
      */
-    private void setSelectedAppointment(Appointment appointment){
-        this.selectedAppointment = appointment;
-        System.out.println("Selected Appointment: " + this.selectedAppointment);
+    private static void setSelectedAppointment(Appointment appointment){
+        AppointmentViewController.selectedAppointment = appointment;
+        System.out.println("Selected Appointment: " + AppointmentViewController.selectedAppointment);
     }
 
-    private Appointment getSelectedAppointment(){
-        return this.selectedAppointment;
+    public static void setPopupStage(Stage popupStage) {
+        AppointmentViewController.popupStage = popupStage;
+    }
+
+    // GETTERS ---------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the selected appointment in the appointment Table View.
+     * @return The selected appointment in the appointment Table View.
+     */
+    public static Appointment getSelectedAppointment(){
+        return AppointmentViewController.selectedAppointment;
+    }
+
+    public static Stage getPopupStage() {
+        return popupStage;
     }
 }

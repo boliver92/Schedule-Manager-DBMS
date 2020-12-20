@@ -71,7 +71,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="updateButton" mnemonicParsing="false" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Update">
+            <Button fx:id="updateButton" mnemonicParsing="false" onAction="#updateButtonOnClick" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Update">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>

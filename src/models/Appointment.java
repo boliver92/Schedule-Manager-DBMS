@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.scene.Parent;
 import utils.DBQuery;
 
 import java.time.Instant;
@@ -120,6 +121,15 @@ public class Appointment {
         for(Appointment appointment : appointmentList){
             System.out.println(appointment);
         }
+    }
+
+    public static boolean refreshAppointment(Appointment appointment){
+        System.out.println("Reloading Appointment.");
+        int index = appointmentList.indexOf(appointment);
+        if(appointmentList.set(index, DBQuery.loadAppointment(appointment.getAppointmentId())) == null){
+            return false;
+        }
+        return true;
     }
 
     public static ObservableList<Appointment> getAppointmentList() {

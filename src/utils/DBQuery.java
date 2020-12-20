@@ -41,6 +41,43 @@ public class DBQuery {
         // Close connection
         DBConnection.closeConnection();
     }
+    public static Appointment loadAppointment(int appointmentId){
+        //Start Connection
+        Connection conn = DBConnection.startConnection();
+
+
+        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM appointments WHERE Appointment_ID = ?")){
+
+            ps.setInt(1, appointmentId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()){
+                Appointment returnAppt = new Appointment(
+                            rs.getInt("Appointment_ID"),
+                            rs.getString("Title"),
+                            rs.getString("Description"),
+                            rs.getString("Location"),
+                            rs.getString("Type"),
+                            rs.getTimestamp("Start").toLocalDateTime().toInstant(ZoneOffset.ofHours(0)),
+                            rs.getTimestamp("End").toLocalDateTime().toInstant(ZoneOffset.ofHours(0)),
+                            rs.getInt("Customer_ID"),
+                            rs.getInt("Contact_ID"),
+                            rs.getInt("User_ID")
+                );
+                DBConnection.closeConnection();
+                return returnAppt;
+            }
+
+            return null;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        // Close connection
+        DBConnection.closeConnection();
+        return null;
+    }
     /**
      * Loads the entries in the contacts table as Contact objects.
      */
@@ -211,6 +248,60 @@ public class DBQuery {
         }
         DBConnection.closeConnection();
         return false;
+    }
+
+    // UPDATE ---------------------------------------------------------------------------------------------------------
+    public static boolean updateAppointment(Appointment appointment,
+                                                String title,
+                                                String description,
+                                                String location,
+                                                String type,
+                                                Instant start,
+                                                Instant end,
+                                                int customerId,
+                                                int contactId){
+        System.out.println("Database - Updating appointment: " + appointment);
+        Connection conn = DBConnection.startConnection();
+        try(PreparedStatement ps = conn.prepareStatement("UPDATE appointments SET (Title = ?, Description = ?, " +
+                "Location = ?, Type = ?, Start = ?, End = ?, Last_Update = ?, Last_Updated_By = ?, " +
+                "Customer_ID = ?, User_ID = ?, Contact_ID = ?) WHERE Appointment_ID = ?")){
+
+
+            ps.setString(1, title);
+            ps.setString(2, description);
+            ps.setString(3, location);
+            ps.setString(4, type);
+            ps.setObject(5, start);
+            ps.setObject(6, end);
+            ps.setObject(7, Instant.now());
+            ps.setString(8, User.getUsername());
+            ps.setInt(9, customerId);
+            ps.setInt(10, User.getUserId());
+            ps.setInt(11, contactId);
+            ps.setInt(12, appointment.getAppointmentId());
+
+            int rs = ps.executeUpdate();
+            if(rs > 0){
+                System.out.println("Database successfully updated.");
+                DBConnection.closeConnection();
+                return true;
+            }
+
+            if(!conn.isClosed()){
+                DBConnection.closeConnection();
+                return  false;
+            }
+
+            return false;
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("Error ( DBQuery.updateAppointment() :" + e.getMessage());
+            DBConnection.closeConnection();
+            return false;
+        }
+
+
     }
 
 }

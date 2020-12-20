@@ -2,11 +2,15 @@ package models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
+
+import java.util.Comparator;
 
 public class Contact {
 
     // Static Variables ----------------------------------------------------------------------------------------------
     private static ObservableList<Contact> contactList = FXCollections.observableArrayList();
+    private static SortedList<Contact> contactSortedList = new SortedList<>(contactList, Comparator.comparing(Contact::getContactName));
 
     // Instance Variables --------------------------------------------------------------------------------------------
     private int contactID;
@@ -70,6 +74,17 @@ public class Contact {
         return contactName;
     }
 
+    public int getContactID() {
+        return contactID;
+    }
+
+    /**
+     * Returns the sorted version of the contactList
+     * @return  the sorted version of the contactList by the contact's name in ascending order.
+     */
+    public static SortedList<Contact> getContactSortedList() {
+        return contactSortedList;
+    }
 
     // Standard Overrides
     @Override

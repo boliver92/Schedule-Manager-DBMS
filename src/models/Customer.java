@@ -2,13 +2,16 @@ package models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 
 import java.time.ZonedDateTime;
+import java.util.Comparator;
 
 public class Customer {
 
     // Static Variables -----------------------------------------------------------------------------------------------
     private static ObservableList<Customer> customerList = FXCollections.observableArrayList();
+    private static SortedList<Customer> customerSortedList = new SortedList<>(customerList, Comparator.comparing(Customer::getCustomerName));
 
     // Instance Variables ---------------------------------------------------------------------------------------------
     private int customerID;
@@ -81,17 +84,21 @@ public class Customer {
         return customerName;
     }
 
+    public int getCustomerID() {
+        return customerID;
+    }
+
+    /**
+     * Provides the sorted customer list.
+     * @return  the Customer list sorted by customer name in ascending order.
+     */
+    public static SortedList<Customer> getCustomerSortedList() {
+        return customerSortedList;
+    }
+
     // Standard Overrides ---------------------------------------------------------------------------------------------
     @Override
     public String toString() {
-        return "Customer{" +
-                "customerID=" + customerID +
-                ", customerName='" + customerName + '\'' +
-                ", address='" + address + '\'' +
-                ", postalCode='" + postalCode + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", divisionID=" + divisionID +
-                ", division=" + division.getDivisionName() +
-                '}';
+        return customerName;
     }
 }
