@@ -1,12 +1,15 @@
 package controllers;
 
-import ScheduleManager.Main;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -17,22 +20,20 @@ import utils.LanguageHandler;
 import views.resources.styles.Colors;
 
 import java.net.URL;
-import java.sql.Time;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
-public class UpdateAppointmentViewController implements Initializable {
+public class AddAppointmentViewController implements Initializable {
 
     private double xOffset, yOffset;
-    private static Appointment appointment;
 
     @FXML
     private AnchorPane containerAnchorPane;
+
+    @FXML
+    private Label addApptUITitleLabel;
 
     @FXML
     private HBox apptIdHBox;
@@ -52,23 +53,35 @@ public class UpdateAppointmentViewController implements Initializable {
     @FXML
     private TextField apptLocationTextField;
 
+    @FXML
+    private HBox searchHBox4;
 
     @FXML
     private TextField apptTypeTextField;
 
+    @FXML
+    private HBox searchHBox41;
 
     @FXML
     private DatePicker apptStartDatePicker;
 
     @FXML
-    private ComboBox<String> apptEndTimeComboBox;
+    private HBox searchHBox411;
 
     @FXML
     private ComboBox<String> apptStartTimeComboBox;
 
+    @FXML
+    private HBox searchHBox412;
 
     @FXML
     private DatePicker apptEndDatePicker;
+
+    @FXML
+    private HBox searchHBox4111;
+
+    @FXML
+    private ComboBox<String> apptEndTimeComboBox;
 
     @FXML
     private ComboBox<Customer> apptCustomerComboBox;
@@ -77,7 +90,7 @@ public class UpdateAppointmentViewController implements Initializable {
     private ComboBox<Contact> apptContactComboBox;
 
     @FXML
-    private Button updateButton;
+    private Button addButton;
 
     @FXML
     private Button returnButton;
@@ -86,13 +99,8 @@ public class UpdateAppointmentViewController implements Initializable {
     private Label uiMessageLabel;
 
     @FXML
-    void returnButtonOnClick(ActionEvent event) {
-        AppointmentViewController.getPopupStage().close();
-    }
-
-    @FXML
-    void updateButtonOnClick(ActionEvent event) {
-        if(validatedTextFields()){
+    void addButtonOnClick(ActionEvent event) {
+        if (validatedTextFields()) {
             uiMessageLabel.setTextFill(Color.web(Colors.SUCCESS.toString()));
             uiMessageLabel.setText("Updating Appointment Information. . . ");
             // TODO: Update appointment object... By replacement or setters?
@@ -105,70 +113,29 @@ public class UpdateAppointmentViewController implements Initializable {
             String endTimeFormatted = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(endTime);
             System.out.println(startTimeFormatted);
             System.out.println(endTimeFormatted);
-            if(DBQuery.updateAppointment(UpdateAppointmentViewController.getAppointment(),
-                    apptTitleTextField.getText(),
-                    apptDescriptionTextField.getText(),
-                    apptLocationTextField.getText(),
-                    apptTypeTextField.getText(),
-                    startTimeFormatted,
-                    endTimeFormatted,
-                    apptCustomerComboBox.getValue().getCustomerID(),
-                    apptContactComboBox.getValue().getContactID()
-                    )){
-                if(Appointment.refreshAppointment(appointment)){
-                    uiMessageLabel.setText("Update successful!");
-                }
-                else {
-                    uiMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
-                    uiMessageLabel.setText("Unable to refresh the appointment.");
-                }
 
+            if (DBQuery.addAppointment(apptTitleTextField.getText(), apptDescriptionTextField.getText(),
+                    apptLocationTextField.getText(), apptTypeTextField.getText(), startTimeFormatted, endTimeFormatted,
+                    apptCustomerComboBox.getValue().getCustomerID(), apptContactComboBox.getValue().getContactID())) {
+                uiMessageLabel.setTextFill(Color.web(Colors.SUCCESS.toString()));
+                uiMessageLabel.setText("Appointment Added Successfully! ");
             }
-            else {
-                uiMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
-                uiMessageLabel.setText("Unable to update the database..");
-            }
-
         }
-
-
     }
 
+    @FXML
+    void returnButtonOnClick(ActionEvent event) {
+        AppointmentViewController.getPopupStage().close();
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        UpdateAppointmentViewController.setAppointment(AppointmentViewController.getSelectedAppointment());
-        // Populating comboboxes.
+        // Populating combobox`
         apptCustomerComboBox.setItems(Customer.getCustomerSortedList());
         apptContactComboBox.setItems(Contact.getContactSortedList());
         apptStartTimeComboBox.setItems(TimeFunctions.getTimes());
         apptEndTimeComboBox.setItems(TimeFunctions.getTimes());
-
-        // Time object conversions
-        LocalDate startDate = UpdateAppointmentViewController.getAppointment().getStart().atZone(ZoneId.of(TimeZone.getDefault().getID())).toLocalDate();
-        LocalDate endDate = UpdateAppointmentViewController.getAppointment().getEnd().atZone(ZoneId.of(TimeZone.getDefault().getID())).toLocalDate();
-        LocalTime startTime = UpdateAppointmentViewController.getAppointment().getStart().atZone(ZoneId.of("America/New_York")).toLocalTime();
-        LocalTime endTime = UpdateAppointmentViewController.getAppointment().getEnd().atZone(ZoneId.of("America/New_York")).toLocalTime();
-        System.out.println(startTime.toString());
-        System.out.println(endTime.toString());
-        System.out.println(TimeFunctions.convertToLong(startTime.toString()));
-        System.out.println(TimeFunctions.convertToLong(endTime.toString()));
-
-
-        //Pre-populating fields
-
-        apptIdTextField.setText(Integer.toString(UpdateAppointmentViewController.getAppointment().getAppointmentId()));
-        apptTitleTextField.setText(UpdateAppointmentViewController.getAppointment().getTitle());
-        apptDescriptionTextField.setText(UpdateAppointmentViewController.getAppointment().getDescription());
-        apptLocationTextField.setText(UpdateAppointmentViewController.getAppointment().getLocation());
-        apptTypeTextField.setText(UpdateAppointmentViewController.getAppointment().getType());
-        apptCustomerComboBox.setValue(UpdateAppointmentViewController.getAppointment().getCustomer());
-        apptContactComboBox.setValue(UpdateAppointmentViewController.getAppointment().getContact());
-        apptStartDatePicker.setValue(startDate);
-        apptEndDatePicker.setValue(endDate);
-        apptStartTimeComboBox.setValue(TimeFunctions.convertToLong(startTime.toString()));
-        apptEndTimeComboBox.setValue(TimeFunctions.convertToLong(endTime.toString()));
 
         // Screen Dragging Listeners
         containerAnchorPane.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -190,7 +157,6 @@ public class UpdateAppointmentViewController implements Initializable {
         Platform.runLater(() -> {
             apptIdHBox.requestFocus();
         });
-
     }
 
     private boolean validatedTextFields(){
@@ -246,16 +212,5 @@ public class UpdateAppointmentViewController implements Initializable {
         }
 
         return true;
-    }
-
-    // SETTERS --------------------------------------------------------------------------------------------------------
-
-
-    public static void setAppointment(Appointment appointment) {
-        UpdateAppointmentViewController.appointment = appointment;
-    }
-
-    public static Appointment getAppointment() {
-        return appointment;
     }
 }

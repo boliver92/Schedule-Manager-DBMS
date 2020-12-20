@@ -76,13 +76,22 @@ public class AppointmentViewController implements Initializable{
     @FXML
     private Label appointmentViewMessageLabel;
 
-    /*
+
     @FXML
     void addButtonOnClick(ActionEvent event) {
-
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("../views/AddAppointmentView.fxml"));
+            popupStage = new Stage();
+            popupStage.initStyle(StageStyle.UNDECORATED);
+            popupStage.initOwner(Main.getpStage());
+            popupStage.initModality(Modality.WINDOW_MODAL);
+            popupStage.setScene(new Scene(root));
+            popupStage.show();
+        } catch (IOException e){
+            e.printStackTrace();
+            System.out.println("Error ( AppointmentViewController.updateButtonOnClick() ): " + e.getMessage());
+        }
     }
-
-     */
 
     @FXML
     void updateButtonOnClick(ActionEvent event) {
@@ -201,10 +210,11 @@ public class AppointmentViewController implements Initializable{
      * Assigns the selected appointment in the appointmentTableView to the instance's selectedAppointment variable.
      * @param appointment   The appointment to be assigned.
      */
-    private static void setSelectedAppointment(Appointment appointment){
+    public static void setSelectedAppointment(Appointment appointment){
         AppointmentViewController.selectedAppointment = appointment;
         System.out.println("Selected Appointment: " + AppointmentViewController.selectedAppointment);
     }
+
 
     public static void setPopupStage(Stage popupStage) {
         AppointmentViewController.popupStage = popupStage;

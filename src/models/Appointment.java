@@ -1,5 +1,7 @@
 package models;
 
+import controllers.AppointmentViewController;
+import controllers.UpdateAppointmentViewController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -66,8 +68,8 @@ public class Appointment {
         // Time Formatting
         this.startTime = start.atZone(ZoneId.of(TimeZone.getDefault().getID())).toLocalTime();
         this.endTime = end.atZone(ZoneId.of(TimeZone.getDefault().getID())).toLocalTime();
-        this.startFormatted = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm").format(start.atZone(ZoneId.of(TimeZone.getDefault().getID())));
-        this.endFormatted = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm").format(end.atZone(ZoneId.of(TimeZone.getDefault().getID())));
+        this.startFormatted = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm a").format(start.atZone(ZoneId.of(TimeZone.getDefault().getID())));
+        this.endFormatted = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm a").format(end.atZone(ZoneId.of(TimeZone.getDefault().getID())));
 
         // Relation Mapping
         this.contact = Contact.findById(this.contactId);
@@ -126,9 +128,9 @@ public class Appointment {
     public static boolean refreshAppointment(Appointment appointment){
         System.out.println("Reloading Appointment.");
         int index = appointmentList.indexOf(appointment);
-        if(appointmentList.set(index, DBQuery.loadAppointment(appointment.getAppointmentId())) == null){
-            return false;
-        }
+        Appointment refreshedAppointment = DBQuery.loadAppointment(appointment.getAppointmentId());
+        appointmentList.set(index, refreshedAppointment);
+        UpdateAppointmentViewController.setAppointment(refreshedAppointment);
         return true;
     }
 

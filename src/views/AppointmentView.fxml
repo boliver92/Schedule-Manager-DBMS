@@ -57,7 +57,7 @@
       </HBox>
       <HBox alignment="CENTER_RIGHT" layoutX="811.0" layoutY="83.0" prefHeight="25.0" prefWidth="339.0">
          <children>
-            <Button fx:id="addButton" mnemonicParsing="false" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Add ">
+            <Button fx:id="addButton" mnemonicParsing="false" onAction="#addButtonOnClick" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Add ">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>

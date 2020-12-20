@@ -4,12 +4,14 @@ import models.*;
 
 import java.sql.*;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 
 public class DBQuery {
 
-    // LOADERS ---------------------------------------------------------------------------------------------------------
+    // READ ---------------------------------------------------------------------------------------------------------
     public static void loadAppointments(){
         //Start Connection
         Connection conn = DBConnection.startConnection();
@@ -220,6 +222,58 @@ public class DBQuery {
         return false;
     }
 
+    // CREATE ----------------------------------------------------------------------------------------------------------
+    public static boolean addAppointment(String title, String description, String location, String type, String start,
+                                         String end, int customerId, int contactId){
+        System.out.println("Database - Adding appointment");
+        Connection conn = DBConnection.startConnection();
+        try(PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO appointments (Title, Description, Location, Type, Start, End, Create_Date, Created_By," +
+                        "Last_Update, Last_Updated_By, Customer_ID, User_ID, Contact_ID) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS)){
+
+
+            ps.setString(1, title);
+            ps.setString(2, description);
+            ps.setString(3, location);
+            ps.setString(4, type);
+            ps.setTimestamp(5, Timestamp.valueOf(start));
+            ps.setTimestamp(6, Timestamp.valueOf(end));
+            ps.setTimestamp(7, Timestamp.valueOf(TimeFunctions.getUtcNowFormatted()));
+            ps.setString(8, User.getUsername());
+            ps.setObject(9, Timestamp.valueOf(TimeFunctions.getUtcNowFormatted()));
+            ps.setString(10, User.getUsername());
+            ps.setInt(11, customerId);
+            ps.setInt(12, User.getUserId());
+            ps.setInt(13, contactId);
+
+            int rs = ps.executeUpdate();
+            if(rs > 0){
+                System.out.println("Database successfully updated.");
+            }
+
+            ResultSet resultSet = ps.getGeneratedKeys();
+            if(resultSet.next()){
+                Appointment.addToList(loadAppointment(resultSet.getInt(1)));
+                DBConnection.closeConnection();
+                return true;
+            }
+
+            if(!conn.isClosed()){
+                DBConnection.closeConnection();
+                return  false;
+            }
+
+            return false;
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("Error ( DBQuery.addAppointment() :" + e.getMessage());
+            DBConnection.closeConnection();
+            return false;
+        }
+    }
     // DELETE ----------------------------------------------------------------------------------------------------------b
     public static boolean removeAppointment(Appointment appointment){
         System.out.println("Attempting to remove appointment object from database: " + appointment);
@@ -256,24 +310,22 @@ public class DBQuery {
                                                 String description,
                                                 String location,
                                                 String type,
-                                                Instant start,
-                                                Instant end,
+                                                String start,
+                                                String end,
                                                 int customerId,
                                                 int contactId){
         System.out.println("Database - Updating appointment: " + appointment);
         Connection conn = DBConnection.startConnection();
-        try(PreparedStatement ps = conn.prepareStatement("UPDATE appointments SET (Title = ?, Description = ?, " +
-                "Location = ?, Type = ?, Start = ?, End = ?, Last_Update = ?, Last_Updated_By = ?, " +
-                "Customer_ID = ?, User_ID = ?, Contact_ID = ?) WHERE Appointment_ID = ?")){
+        try(PreparedStatement ps = conn.prepareStatement("UPDATE appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Last_Update = ?, Last_Updated_By = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?")){
 
 
             ps.setString(1, title);
             ps.setString(2, description);
             ps.setString(3, location);
             ps.setString(4, type);
-            ps.setObject(5, start);
-            ps.setObject(6, end);
-            ps.setObject(7, Instant.now());
+            ps.setTimestamp(5, Timestamp.valueOf(start));
+            ps.setTimestamp(6, Timestamp.valueOf(end));
+            ps.setObject(7, Timestamp.valueOf(TimeFunctions.getUtcNowFormatted()));
             ps.setString(8, User.getUsername());
             ps.setInt(9, customerId);
             ps.setInt(10, User.getUserId());
