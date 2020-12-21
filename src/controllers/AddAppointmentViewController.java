@@ -27,7 +27,15 @@ import java.util.TimeZone;
 
 public class AddAppointmentViewController implements Initializable {
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // Instance Variables ----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     private double xOffset, yOffset;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // FXML Variables --------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     @FXML
     private AnchorPane containerAnchorPane;
@@ -98,12 +106,20 @@ public class AddAppointmentViewController implements Initializable {
     @FXML
     private Label uiMessageLabel;
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // FXML METHODS ----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Calls the validatedTextFields method and if true, it creates a new appointment object and adds it to the database
+     * and appointmentList
+     * @param event The event that causes the method to be called
+     */
     @FXML
     void addButtonOnClick(ActionEvent event) {
         if (validatedTextFields()) {
             uiMessageLabel.setTextFill(Color.web(Colors.SUCCESS.toString()));
-            uiMessageLabel.setText("Updating Appointment Information. . . ");
-            // TODO: Update appointment object... By replacement or setters?
+            uiMessageLabel.setText(LanguageHandler.getLocaleString("Updating Appointment Information"));
             Convert dateTime = (date, time) -> ZonedDateTime.of(date.getValue(), LocalTime.parse(TimeFunctions.convertToShort(time.getValue())), ZoneId.of((TimeZone.getDefault().getID()))).toInstant();
             Instant start = dateTime.toInstant(apptStartDatePicker, apptStartTimeComboBox);
             Instant end = dateTime.toInstant(apptEndDatePicker, apptEndTimeComboBox);
@@ -123,11 +139,20 @@ public class AddAppointmentViewController implements Initializable {
         }
     }
 
+    /**
+     * Closes the window and returns to the MainView
+     * @param event THe event that causes the method to be called.
+     */
     @FXML
     void returnButtonOnClick(ActionEvent event) {
         AppointmentViewController.getPopupStage().close();
     }
 
+    /**
+     * Initializes the view with the correct styling, listeners, and text.
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -174,6 +199,15 @@ public class AddAppointmentViewController implements Initializable {
         });
     }
 
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // INSTANCE METHODS ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Confirms that the text fields are filled in correctly.
+     * @return True if all fields are filled in correctly, false if not.
+     */
     private boolean validatedTextFields(){
         uiMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
         if(apptTitleTextField.getText().isEmpty()){

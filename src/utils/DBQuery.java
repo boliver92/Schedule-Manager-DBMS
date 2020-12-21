@@ -80,6 +80,40 @@ public class DBQuery {
         DBConnection.closeConnection();
         return null;
     }
+
+    public static Customer loadCustomer(int customerId){
+        //Start Connection
+        Connection conn = DBConnection.startConnection();
+
+
+        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM customers WHERE Customer_ID = ?")){
+
+            ps.setInt(1, customerId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()){
+                Customer returnCustomer = new Customer(
+                        rs.getInt("Customer_ID"),
+                        rs.getString("Customer_Name"),
+                        rs.getString("Address"),
+                        rs.getString("Postal_Code"),
+                        rs.getString("Phone"),
+                        rs.getInt("Division_ID")
+                );
+                DBConnection.closeConnection();
+                return returnCustomer;
+            }
+
+            return null;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        // Close connection
+        DBConnection.closeConnection();
+        return null;
+    }
     /**
      * Loads the entries in the contacts table as Contact objects.
      */
@@ -274,6 +308,51 @@ public class DBQuery {
             return false;
         }
     }
+    public static boolean addCustomer(String name, String address, Division division, String zipCode, String phoneNumber){
+        System.out.println("Database - Adding appointment");
+        Connection conn = DBConnection.startConnection();
+        try(PreparedStatement ps = conn.prepareStatement(
+                "INSERT INTO customers (Customer_Name, Address, Postal_Code, Phone, Create_Date, Created_By, " +
+                        "Last_Update, Last_Updated_By, Division_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS)){
+
+
+            ps.setString(1, name);
+            ps.setString(2, address);
+            ps.setString(3, zipCode);
+            ps.setString(4, phoneNumber);
+            ps.setTimestamp(5, Timestamp.valueOf(TimeFunctions.getUtcNowFormatted()));
+            ps.setString(6, User.getUsername());
+            ps.setTimestamp(7, Timestamp.valueOf(TimeFunctions.getUtcNowFormatted()));
+            ps.setString(8, User.getUsername());
+            ps.setInt(9, division.getDivisionId());
+
+            int rs = ps.executeUpdate();
+            if(rs > 0){
+                System.out.println("Database successfully updated.");
+            }
+
+            ResultSet resultSet = ps.getGeneratedKeys();
+            if(resultSet.next()){
+                Customer.addToList(loadCustomer(resultSet.getInt(1)));
+                DBConnection.closeConnection();
+                return true;
+            }
+
+            if(!conn.isClosed()){
+                DBConnection.closeConnection();
+                return  false;
+            }
+
+            return false;
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("Error ( DBQuery.addAppointment() :" + e.getMessage());
+            DBConnection.closeConnection();
+            return false;
+        }
+    }
     // DELETE ----------------------------------------------------------------------------------------------------------b
     public static boolean removeAppointment(Appointment appointment){
         System.out.println("Attempting to remove appointment object from database: " + appointment);
@@ -352,6 +431,46 @@ public class DBQuery {
             ps.setInt(10, User.getUserId());
             ps.setInt(11, contactId);
             ps.setInt(12, appointment.getAppointmentId());
+
+            int rs = ps.executeUpdate();
+            if(rs > 0){
+                System.out.println("Database successfully updated.");
+                DBConnection.closeConnection();
+                return true;
+            }
+
+            if(!conn.isClosed()){
+                DBConnection.closeConnection();
+                return  false;
+            }
+
+            return false;
+
+        } catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("Error ( DBQuery.updateAppointment() :" + e.getMessage());
+            DBConnection.closeConnection();
+            return false;
+        }
+
+
+    }
+    public static boolean updateCustomer(Customer customer, String name, String address, Division division,
+                                         String zipCode, String phoneNumber){
+        System.out.println("Database - Updating customer: " + customer);
+        Connection conn = DBConnection.startConnection();
+        try(PreparedStatement ps = conn.prepareStatement("UPDATE customers SET Customer_Name = ?, Address = ?, " +
+                "Postal_Code = ?, Phone = ?, Last_update = ?, Last_Updated_By = ?, Division_ID = ? WHERE Customer_ID = ?")){
+
+
+            ps.setString(1, name);
+            ps.setString(2, address);
+            ps.setString(3, zipCode);
+            ps.setString(4, phoneNumber);
+            ps.setTimestamp(5, Timestamp.valueOf(TimeFunctions.getUtcNowFormatted()));
+            ps.setString(6, User.getUsername());
+            ps.setInt(7, division.getDivisionId());
+            ps.setInt(8, customer.getCustomerID());
 
             int rs = ps.executeUpdate();
             if(rs > 0){

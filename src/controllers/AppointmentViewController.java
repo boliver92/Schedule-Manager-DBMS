@@ -16,14 +16,24 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import models.Appointment;
 import models.Contact;
+import models.ConvertDate;
 import utils.LanguageHandler;
 import views.resources.styles.Colors;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 public class AppointmentViewController implements Initializable{
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // STATIC VARIABLES ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static Appointment selectedAppointment;
     private static Stage popupStage;
@@ -76,7 +86,21 @@ public class AppointmentViewController implements Initializable{
     @FXML
     private Label appointmentViewMessageLabel;
 
+    @FXML
+    private DatePicker startDatePicker;
 
+    @FXML
+    private DatePicker endDatePicker;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // FXML Methods ----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Opens the AddAppointmentView in a separate stage. This function will set the initModality of the new stage to
+     * Modality.WINDOW_MODAL and the owner will be the stage assigned to Main.pStage.
+     * @param event The event that causes the method to be called.
+     */
     @FXML
     void addButtonOnClick(ActionEvent event) {
         try {
@@ -92,29 +116,6 @@ public class AppointmentViewController implements Initializable{
             System.out.println("Error ( AppointmentViewController.updateButtonOnClick() ): " + e.getMessage());
         }
     }
-
-    @FXML
-    void updateButtonOnClick(ActionEvent event) {
-        if(getSelectedAppointment() == null){
-            appointmentViewMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
-            appointmentViewMessageLabel.setText(LanguageHandler.getLocaleString("Select an appointment to be updated"));
-        } else {
-            appointmentViewMessageLabel.setText("");
-            try {
-                Parent root = FXMLLoader.load(getClass().getResource("../views/UpdateAppointmentView.fxml"));
-                popupStage = new Stage();
-                popupStage.initStyle(StageStyle.UNDECORATED);
-                popupStage.initOwner(Main.getpStage());
-                popupStage.initModality(Modality.WINDOW_MODAL);
-                popupStage.setScene(new Scene(root));
-                popupStage.show();
-            } catch (IOException e){
-                e.printStackTrace();
-                System.out.println("Error ( AppointmentViewController.updateButtonOnClick() ): " + e.getMessage());
-            }
-        }
-    }
-
 
     /**
      * Removes the class's selectedAppointment object from the appointmentList and database table.
@@ -138,6 +139,33 @@ public class AppointmentViewController implements Initializable{
         }
         appointmentViewTable.getSelectionModel().clearSelection();
 
+    }
+
+    /**
+     * Opens the UpdateAppointmentView in a separate stage. This function will set the initModality of the new stage to
+     * Modality.WINDOW_MODAL and the owner will be the stage assigned to Main.pStage.
+     * @param event The event that causes the method to be called.
+     */
+    @FXML
+    void updateButtonOnClick(ActionEvent event) {
+        if(getSelectedAppointment() == null){
+            appointmentViewMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
+            appointmentViewMessageLabel.setText(LanguageHandler.getLocaleString("Select an appointment to be updated"));
+        } else {
+            appointmentViewMessageLabel.setText("");
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("../views/UpdateAppointmentView.fxml"));
+                popupStage = new Stage();
+                popupStage.initStyle(StageStyle.UNDECORATED);
+                popupStage.initOwner(Main.getpStage());
+                popupStage.initModality(Modality.WINDOW_MODAL);
+                popupStage.setScene(new Scene(root));
+                popupStage.show();
+            } catch (IOException e){
+                e.printStackTrace();
+                System.out.println("Error ( AppointmentViewController.updateButtonOnClick() ): " + e.getMessage());
+            }
+        }
     }
 
     /**
@@ -176,6 +204,90 @@ public class AppointmentViewController implements Initializable{
         customerIdColumn.setCellValueFactory(new PropertyValueFactory<>("customerId"));
         appointmentViewTable.setItems(Appointment.getAppointmentFilteredList());
 
+        // Date Range Filter Setup
+        startDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+
+            AppointmentViewController.setSelectedAppointment(null);
+            appointmentViewTable.getSelectionModel().clearSelection();
+
+            ConvertDate dateTime = (date, time) -> ZonedDateTime.of(date.getValue(), LocalTime.parse(time), ZoneId.of((TimeZone.getDefault().getID()))).toInstant();
+            if(startDatePicker.getValue() != null && endDatePicker.getValue() != null){
+                Instant start = dateTime.toInstant(startDatePicker, "00:00");
+                Instant end = dateTime.toInstant(endDatePicker, "23:00");
+                Appointment.getAppointmentFilteredListByDate().setPredicate(s -> {
+                    if ((s.getStart().equals(start) || s.getStart().isAfter(start)) && (s.getStart().equals(end) || s.getStart().isBefore(end))) {
+                        return true;
+                    }
+                    return false;
+                });
+                return;
+            }
+            if(startDatePicker.getValue() != null && endDatePicker.getValue() == null){
+                Instant start = dateTime.toInstant(startDatePicker, "00:00");
+                Appointment.getAppointmentFilteredListByDate().setPredicate(s -> {
+                    if (s.getStart().equals(start) || s.getStart().isAfter(start)) {
+                        return true;
+                    }
+                    return false;
+                });
+                return;
+            }
+
+            if(startDatePicker.getValue() == null && endDatePicker.getValue() != null){
+                Instant end = dateTime.toInstant(endDatePicker, "23:00");
+                Appointment.getAppointmentFilteredListByDate().setPredicate(s -> {
+                    if(s.getStart().equals(end) || s.getStart().isBefore(end)){
+                        return true;
+                    }
+                    return false;
+                });
+                return;
+            }
+
+            Appointment.getAppointmentFilteredListByDate().setPredicate(s -> true);
+        });
+        endDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+
+            AppointmentViewController.setSelectedAppointment(null);
+            appointmentViewTable.getSelectionModel().clearSelection();
+
+            ConvertDate dateTime = (date, time) -> ZonedDateTime.of(date.getValue(), LocalTime.parse(time), ZoneId.of((TimeZone.getDefault().getID()))).toInstant();
+            if(startDatePicker.getValue() != null && endDatePicker.getValue() != null){
+                Instant start = dateTime.toInstant(startDatePicker, "00:00");
+                Instant end = dateTime.toInstant(endDatePicker, "23:00");
+                Appointment.getAppointmentFilteredListByDate().setPredicate(s -> {
+                    if ((s.getStart().equals(start) || s.getStart().isAfter(start)) && (s.getStart().equals(end) || s.getStart().isBefore(end))) {
+                        return true;
+                    }
+                    return false;
+                });
+                return;
+            }
+            if(startDatePicker.getValue() != null && endDatePicker.getValue() == null){
+                Instant start = dateTime.toInstant(startDatePicker, "00:00");
+                Appointment.getAppointmentFilteredListByDate().setPredicate(s -> {
+                    if (s.getStart().equals(start) || s.getStart().isAfter(start)) {
+                        return true;
+                    }
+                    return false;
+                });
+                return;
+            }
+
+            if(startDatePicker.getValue() == null && endDatePicker.getValue() != null){
+                Instant end = dateTime.toInstant(endDatePicker, "23:00");
+                Appointment.getAppointmentFilteredListByDate().setPredicate(s -> {
+                    if(s.getStart().equals(end) || s.getStart().isBefore(end)){
+                        return true;
+                    }
+                    return false;
+                });
+                return;
+            }
+
+            Appointment.getAppointmentFilteredListByDate().setPredicate(s -> true);
+        });
+
         // Searchfield setup
         searchTextField.textProperty().addListener(observable ->  {
             String input = searchTextField.getText();
@@ -206,7 +318,9 @@ public class AppointmentViewController implements Initializable{
         appointmentViewTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, appointment, newSelection) -> setSelectedAppointment(newSelection) ));
     }
 
+    //------------------------------------------------------------------------------------------------------------------
     // SETTERS----------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
      * Assigns the selected appointment in the appointmentTableView to the instance's selectedAppointment variable.
@@ -218,11 +332,9 @@ public class AppointmentViewController implements Initializable{
     }
 
 
-    public static void setPopupStage(Stage popupStage) {
-        AppointmentViewController.popupStage = popupStage;
-    }
-
+    //------------------------------------------------------------------------------------------------------------------
     // GETTERS ---------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
     /**
      * Returns the selected appointment in the appointment Table View.
@@ -232,6 +344,10 @@ public class AppointmentViewController implements Initializable{
         return AppointmentViewController.selectedAppointment;
     }
 
+    /**
+     * Returns the popupStage stage.
+     * @return popupStage
+     */
     public static Stage getPopupStage() {
         return popupStage;
     }

@@ -23,9 +23,19 @@ import java.util.TimeZone;
 
 public class UpdateAppointmentViewController implements Initializable {
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // Instance Variables ----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private double xOffset, yOffset;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Static Variables ----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private static Appointment appointment;
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // FXML Variables --------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     @FXML
     private AnchorPane containerAnchorPane;
 
@@ -83,17 +93,31 @@ public class UpdateAppointmentViewController implements Initializable {
     @FXML
     private Label updateAppUITitleLabel;
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // FXML METHODS ----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Closes the window and returns to the MainView
+     * @param event THe event that causes the method to be called.
+     */
     @FXML
     void returnButtonOnClick(ActionEvent event) {
         AppointmentViewController.getPopupStage().close();
     }
 
+    /**
+     * Calls the validatedTextFields method and if true, it creates a replaces the current appointment object with a new one
+     * in the appointmentList and updates the values in the database.
+     * @param event The event that causes the method to be called
+     */
     @FXML
     void updateButtonOnClick(ActionEvent event) {
         if(validatedTextFields()){
+
             uiMessageLabel.setTextFill(Color.web(Colors.SUCCESS.toString()));
             uiMessageLabel.setText(LanguageHandler.getLocaleString("Updating appointment information"));
-            // TODO: Update appointment object... By replacement or setters?
+
             Convert dateTime = (date, time) -> ZonedDateTime.of(date.getValue(), LocalTime.parse(TimeFunctions.convertToShort(time.getValue())), ZoneId.of((TimeZone.getDefault().getID()))).toInstant();
             Instant start = dateTime.toInstant(apptStartDatePicker, apptStartTimeComboBox);
             Instant end = dateTime.toInstant(apptEndDatePicker, apptEndTimeComboBox);
@@ -101,8 +125,7 @@ public class UpdateAppointmentViewController implements Initializable {
             LocalDateTime endTime = LocalDateTime.ofInstant(end, ZoneOffset.UTC);
             String startTimeFormatted = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(startTime);
             String endTimeFormatted = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(endTime);
-            System.out.println(startTimeFormatted);
-            System.out.println(endTimeFormatted);
+
             if(DBQuery.updateAppointment(UpdateAppointmentViewController.getAppointment(),
                     apptTitleTextField.getText(),
                     apptDescriptionTextField.getText(),
@@ -113,6 +136,7 @@ public class UpdateAppointmentViewController implements Initializable {
                     apptCustomerComboBox.getValue().getCustomerID(),
                     apptContactComboBox.getValue().getContactID()
                     )){
+
                 if(Appointment.refreshAppointment(appointment)){
                     uiMessageLabel.setText(LanguageHandler.getLocaleString("Update Successful"));
                 }
@@ -122,6 +146,7 @@ public class UpdateAppointmentViewController implements Initializable {
                 }
 
             }
+
             else {
                 uiMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
                 uiMessageLabel.setText(LanguageHandler.getLocaleString("Unable to update the database"));
@@ -132,7 +157,11 @@ public class UpdateAppointmentViewController implements Initializable {
 
     }
 
-
+    /**
+     * Initializes the view with the correct styling, listeners, and text.
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -207,6 +236,10 @@ public class UpdateAppointmentViewController implements Initializable {
 
     }
 
+    /**
+     * Confirms that the text fields are filled in correctly.
+     * @return True if all fields are filled in correctly, false if not.
+     */
     private boolean validatedTextFields(){
         uiMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
         if(apptTitleTextField.getText().isEmpty()){
@@ -262,13 +295,25 @@ public class UpdateAppointmentViewController implements Initializable {
         return true;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     // SETTERS --------------------------------------------------------------------------------------------------------
-
-
+    // -----------------------------------------------------------------------------------------------------------------
+    /**
+     * Assigns UpdateAppointmentViewController.appointment to the appointment.
+     * @param appointment The Appointment object to assign to UpdateAppointmentViewController.appointment
+     */
     public static void setAppointment(Appointment appointment) {
         UpdateAppointmentViewController.appointment = appointment;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // GETTERS ---------------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the Appointment assigned to UpdateAppointmentViewController.appointment
+     * @return UpdateAppointmentViewController.appointment
+     */
     public static Appointment getAppointment() {
         return appointment;
     }

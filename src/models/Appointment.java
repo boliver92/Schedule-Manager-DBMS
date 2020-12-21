@@ -19,7 +19,9 @@ import java.util.TimeZone;
 
 public class Appointment {
 
-    // Static Variables
+    // -----------------------------------------------------------------------------------------------------------------
+    // Static Variables ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private static ObservableList<Appointment> appointmentList = FXCollections.observableArrayList();
     private static SortedList<Appointment> appointmentSortedList = new SortedList<>(appointmentList, (o1, o2) -> {
         if(o1.getStart().isBefore(o2.getStart())){
@@ -30,8 +32,12 @@ public class Appointment {
         }
         return 0;
     });
-    private static FilteredList<Appointment>  appointmentFilteredList = new FilteredList<>(appointmentSortedList, s -> true);
-    // Instance variables
+    private static FilteredList<Appointment> appointmentFilteredListByDate = new FilteredList<>(appointmentSortedList, s -> true);
+    private static FilteredList<Appointment>  appointmentFilteredList = new FilteredList<>(appointmentFilteredListByDate, s -> true);
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Instance Variables ----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     private int appointmentId;
     private String title;
@@ -50,7 +56,9 @@ public class Appointment {
     private Customer customer;
     private Contact contact;
 
-    // Constructor
+    // -----------------------------------------------------------------------------------------------------------------
+    // Constructor -----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     public Appointment(){}
     public Appointment(int appointmentId, String title, String description, String location, String type,
                        Instant start, Instant end, int customerId, int contactId, int userId){
@@ -79,18 +87,70 @@ public class Appointment {
         System.out.println("New Appointment Object: " + this);
     }
 
-    // Instance Methods
+    // -----------------------------------------------------------------------------------------------------------------
+    // INSTANCE METHODS ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
 
-    // Static Methods
-    public static SortedList<Appointment> getAppointmentSortedList() {
-        return appointmentSortedList;
+    // -----------------------------------------------------------------------------------------------------------------
+    // STATIC METHODS --------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Takes an appointment object as an input and adds it to the appointmentList. This is required to keep the object
+     * persistent and to use the object with methods that utilize the Observablelist.
+     * @param   appointment The appointment object to be added to the list.
+     * @return              true if the appointment object was added, false if not.
+     */
+    public static boolean addToList(Appointment appointment){
+        return appointmentList.add(appointment);
     }
 
-    public static FilteredList<Appointment> getAppointmentFilteredList() {
-        return appointmentFilteredList;
+    /**
+     * Returns true if the customer passed in is assigned to any appointment's contact in appointmentList.
+     * @param customer
+     * @return true if the customer is assigned to an appointment, false if not.
+     */
+    public static boolean exists(Customer customer){
+        for(Appointment appointment : appointmentList){
+            if(appointment.getCustomer() == customer){
+                return true;
+            }
+        }
+        return false;
     }
 
+    /**
+     * Prints the String representation of each appointment object in the appointmentList.
+     */
+    public static void printAppointmentList(){
+        System.out.println("-----------------------------------Appointment List-----------------------------------");
+        for(Appointment appointment : appointmentList){
+            System.out.println(appointment);
+        }
+    }
+
+    /**
+     * Overrides the current appointment in the appointmentList with the most recent appointment in the database that has
+     * the same appointmentId
+     * @param appointment Appointment to be refreshed.
+     * @return true
+     */
+    public static boolean refreshAppointment(Appointment appointment){
+        System.out.println("Reloading Appointment.");
+        int index = appointmentList.indexOf(appointment);
+        Appointment refreshedAppointment = DBQuery.loadAppointment(appointment.getAppointmentId());
+        appointmentList.set(index, refreshedAppointment);
+        UpdateAppointmentViewController.setAppointment(refreshedAppointment);
+        return true;
+    }
+
+    /**
+     * Removes the appointment from the appointmentList and calls DBQuery method to remove the appointment from the
+     * Database.
+     * @param appointment The appointment to be removed
+     * @return true if the appointment was removed, otherwise false.
+     */
     public static boolean removeAppointment(Appointment appointment) {
         if (DBQuery.removeAppointment(appointment)) {
             if (appointmentList.remove(appointment)) {
@@ -105,121 +165,156 @@ public class Appointment {
         return false;
     }
 
-    public static boolean findByCustomerId(int customerId){
-        for(Appointment appointment : appointmentList){
-            if(appointment.getCustomerId() == customerId)
-                return true;
-        }
-        return false;
-    }
+        // -------------------------------------------------------------------------------------------------------------
+        // STATIC GETTERS ----------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
 
-    public static boolean exists(Customer customer){
-        for(Appointment appointment : appointmentList){
-            if(appointment.getCustomer() == customer){
-                return true;
-            }
-        }
-        return false;
-    }
     /**
-     * Takes an appointment object as an input and adds it to the appointmentList. This is required to keep the object
-     * persistent and to use the object with methods that utilize the Observablelist.
-     * @param   appointment The appointment object to be added to the list.
-     * @return              true if the appointment object was added, false if not.
+     * Returns the filtered appointmentList
+     * @return FilteredList(Appointment) appointmentFilteredList
      */
-    public static boolean addToList(Appointment appointment){
-        return appointmentList.add(appointment);
+    public static FilteredList<Appointment> getAppointmentFilteredList() {
+        return appointmentFilteredList;
     }
 
     /**
-     * Prints the String representation of each appointment object in the appointmentList.
+     * Returns the filtered appointmentList
+     * @return FilteredList(Appointment) appointmentFilteredListByDate
      */
-    public static void printAppointmentList(){
-        System.out.println("-----------------------------------Appointment List-----------------------------------");
-        for(Appointment appointment : appointmentList){
-            System.out.println(appointment);
-        }
+    public static FilteredList<Appointment> getAppointmentFilteredListByDate() {
+        return appointmentFilteredListByDate;
     }
 
-    public static boolean refreshAppointment(Appointment appointment){
-        System.out.println("Reloading Appointment.");
-        int index = appointmentList.indexOf(appointment);
-        Appointment refreshedAppointment = DBQuery.loadAppointment(appointment.getAppointmentId());
-        appointmentList.set(index, refreshedAppointment);
-        UpdateAppointmentViewController.setAppointment(refreshedAppointment);
-        return true;
-    }
-
-    public static ObservableList<Appointment> getAppointmentList() {
-        return appointmentList;
-    }
 
     // GETTER ---------------------------------------------------------------------------------------------------------
 
+    /**
+     * Returns the customer's ID
+     * @return customerId
+     */
     public int getCustomerId() {
         return customerId;
     }
 
+    /**
+     * Returns the formatted String start time
+     * @return startFormatted
+     */
     public String getStartFormatted() {
         return startFormatted;
     }
 
+    /**
+     * Returns the formatted String end time
+     * @return endFormatted
+     */
     public String getEndFormatted() {
         return endFormatted;
     }
 
+    /**
+     * Returns the appointment ID.
+     * @return appointmentId
+     */
     public int getAppointmentId() {
         return appointmentId;
     }
 
+    /**
+     * Returns the appointment Type
+     * @return type
+     */
     public String getType() {
         return type;
     }
 
+    /**
+     * Returns the appointments User ID
+     * @return userId
+     */
     public int getUserId() {
         return userId;
     }
 
+    /**
+     * Returns the LocalTime object startTime showing the starting time of the appointment.
+     * @return startTime
+     */
     public LocalTime getStartTime() {
         return startTime;
     }
 
+    /**
+     * Returns the LocalTime object startTime showing the ending time of the appointment.
+     * @return endTime
+     */
     public LocalTime getEndTime() {
         return endTime;
     }
 
+    /**
+     * Returns the Contact object assigned to the appointment.
+     * @return contact
+     */
     public Contact getContact() {
         return contact;
     }
 
+    /**
+     * Returns the Customer object assigned to the appointment.
+     * @return customer
+     */
     public Customer getCustomer() {
         return customer;
     }
 
+    /**
+     * Returns the Instant end object assigned to the appointment
+     * @return end
+     */
     public Instant getEnd() {
         return end;
     }
 
+    /**
+     * Returns the Instant start object assigned to the appointment
+     * @return start
+     */
     public Instant getStart() {
         return start;
     }
 
+    /**
+     * Returns the contact ID
+     * @return contactId
+     */
     public int getContactId() {
         return contactId;
     }
 
+    /**
+     * Returns the appointment's description
+     * @return description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Returns the appointment's location
+     * @return location
+     */
     public String getLocation() {
         return location;
     }
 
+    /**
+     * Returns the appointment's title
+     * @return title
+     */
     public String getTitle() {
         return title;
     }
-
 
     @Override
     public String toString() {

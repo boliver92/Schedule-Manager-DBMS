@@ -23,6 +23,9 @@ import java.util.ResourceBundle;
 
 public class MainViewController implements Initializable {
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // INSTANCE VARIABLES ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private double xOffset, yOffset;
 
     @FXML
@@ -49,21 +52,32 @@ public class MainViewController implements Initializable {
     @FXML
     private AnchorPane subAnchorContainer;
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // FXML Methods ----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Calls the loadAppointmentView method to show the AppointmentView.fxml in the subAnchorContainer.
+     * @param event event that calls the method
+     */
     @FXML
     void appointmentButtonOnClick(ActionEvent event) {
         loadAppointmentView();
     }
 
-    @FXML
-    void contactButtonOnClick(ActionEvent event) {
-
-    }
-
+    /**
+     * Calls the loadAppointmentView method to show the CustomerView.fxml in the subAnchorContainer.
+     * @param event event that calls the method
+     */
     @FXML
     void customerButtonOnClick(ActionEvent event) {
         loadCustomerView();
     }
 
+    /**
+     * Closes and exits the application
+     * @param event The event that called the method.
+     */
     @FXML
     void exitButtonOnClick(ActionEvent event) {
         Main.getpStage().close();
@@ -71,19 +85,29 @@ public class MainViewController implements Initializable {
         System.exit(0);
     }
 
+    /**
+     * Closes the stage assigned to Main.pStage and displays the LoginView.fxml
+     * @param event the event that calls the method.
+     */
     @FXML
     void logoutButtonOnClick(ActionEvent event) {
         loadLoginView();
     }
 
+    /**
+     * Initializes the FXML elements with the appropriate language, labels, observableLists and listeners.
+     * @param url
+     * @param resourceBundle
+     */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        // Loads the inital view (AppointmentView.fxml)
         loadAppointmentView();
 
+        // Sets appropriate language labels
         appointmentButton.setText(LanguageHandler.getLocaleString("Appointments"));
         customerButton.setText(LanguageHandler.getLocaleString("main_Customers"));
-        contactButton.setText(LanguageHandler.getLocaleString("Contacts"));
         exitButton.setText(LanguageHandler.getLocaleString("exit"));
         logoutButton.setText(LanguageHandler.getLocaleString("Logout"));
 
@@ -106,6 +130,13 @@ public class MainViewController implements Initializable {
         System.out.println("MainView.fxml loaded and initialized.");
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    // INSTANCE METHODS ------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Opens the LoginView.fxml in a separate stage and closes the stage assigned to Main.pStage.
+     */
     private void loadLoginView(){
         try{
             Parent root = FXMLLoader.load(getClass().getResource("../views/LoginView.fxml"));
@@ -120,6 +151,9 @@ public class MainViewController implements Initializable {
             System.out.println("Error: " + e.getMessage());
         }
     }
+    /**
+     * Opens the AppointmentView.fxml and displays it in the subAnchorContainer anchorpane.
+     */
     private void loadAppointmentView(){
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../views/AppointmentView.fxml"));
@@ -129,7 +163,9 @@ public class MainViewController implements Initializable {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Opens the CustomerView.fxml and displays it in the subAnchorContainer anchorpane.
+     */
     private void loadCustomerView(){
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../views/CustomerView.fxml"));

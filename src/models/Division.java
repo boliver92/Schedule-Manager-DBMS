@@ -80,6 +80,10 @@ public class Division {
         return divisionFilteredList;
     }
 
+    public int getDivisionId() {
+        return divisionId;
+    }
+
     // Standard Overrides ---------------------------------------------------------------------------------------------
     @Override
     public String toString() {

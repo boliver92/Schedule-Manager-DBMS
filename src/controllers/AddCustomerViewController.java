@@ -14,7 +14,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import models.Country;
-import models.Customer;
 import models.Division;
 import utils.DBQuery;
 import utils.LanguageHandler;
@@ -23,35 +22,38 @@ import views.resources.styles.Colors;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class UpdateCustomerViewController implements Initializable {
+public class AddCustomerViewController implements Initializable {
 
     // -----------------------------------------------------------------------------------------------------------------
     // Instance Variables ----------------------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
-    private double xOffset, yOffset;
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // Static Variables ----------------------------------------------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    private static Customer customer;
+    double xOffset, yOffset;
 
     // -----------------------------------------------------------------------------------------------------------------
     // FXML Variables --------------------------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
+
     @FXML
     private AnchorPane containerAnchorPane;
 
     @FXML
-    private Label updateAppUITitleLabel;
+    private Label addCustomerUITitleLabel;
 
     @FXML
-    private HBox apptIdHBox;
+    private HBox customerIdHbox;
 
     @FXML
     private TextField IdTextField;
 
     @FXML
+    private HBox nameHBox;
+
+    @FXML
     private TextField nameTextField;
+
+    @FXML
+    private HBox addressHbox;
 
     @FXML
     private TextField addressTextField;
@@ -72,7 +74,13 @@ public class UpdateCustomerViewController implements Initializable {
     private ComboBox<Division> divisionComboBox;
 
     @FXML
+    private HBox postalCodeHbox;
+
+    @FXML
     private TextField zipCodeTextField;
+
+    @FXML
+    private HBox phoneNumberHbox;
 
     @FXML
     private TextField phoneNumberTextField;
@@ -91,24 +99,21 @@ public class UpdateCustomerViewController implements Initializable {
     }
 
     /**
-     * Calls the validatedTextFields method and if true, it creates a replaces the current customer object with a new one
-     * in the customerList and updates the values in the database.
+     * Calls the validatedTextFields method and if true, it creates a new appointment object and replaces the currently
+     * selected object in the appointmentList
      * @param event The event that causes the method to be called
      */
     @FXML
     void updateButtonOnClick(ActionEvent event) {
-        if(validatedTextFields()) {
-            uiMessageLabel.setTextFill(Color.web(Colors.SUCCESS.toString()));
-            uiMessageLabel.setText(LanguageHandler.getLocaleString("Updating customer information"));
-            if(DBQuery.updateCustomer(
-                    UpdateCustomerViewController.getCustomer(), nameTextField.getText(), addressTextField.getText(),
-                    divisionComboBox.getValue(), zipCodeTextField.getText(), phoneNumberTextField.getText())){
-                if(Customer.refreshCustomer(UpdateCustomerViewController.getCustomer())){
-                    uiMessageLabel.setText(LanguageHandler.getLocaleString("Update Successful"));
-                }
+        if(validatedTextFields()){
+            uiMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
+            uiMessageLabel.setText(LanguageHandler.getLocaleString("Adding customer"));
+            if(DBQuery.addCustomer(nameTextField.getText(), addressTextField.getText(), divisionComboBox.getValue(),
+                    zipCodeTextField.getText(), phoneNumberTextField.getText())){
+                uiMessageLabel.setTextFill(Color.web(Colors.SUCCESS.toString()));
+                uiMessageLabel.setText(LanguageHandler.getLocaleString("Customer Added Successfully"));
             }
         }
-        return;
     }
 
     /**
@@ -119,8 +124,7 @@ public class UpdateCustomerViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        customer = CustomerViewController.getSelectedCustomer();
-
+        // Country Combo Box Listener - Needed to populate division selections on country selection.
         countryComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldSelection, newSelection) -> {
             Country selection = newSelection;
 
@@ -138,7 +142,7 @@ public class UpdateCustomerViewController implements Initializable {
         });
 
         // Language Conversions
-        updateAppUITitleLabel.setText(LanguageHandler.getLocaleString("Update Customer"));
+        addCustomerUITitleLabel.setText(LanguageHandler.getLocaleString("Add Customer"));
         IdTextField.setPromptText(LanguageHandler.getLocaleString("Customer ID"));
         nameTextField.setPromptText(LanguageHandler.getLocaleString("Name"));
         addressTextField.setPromptText(LanguageHandler.getLocaleString("Address"));
@@ -146,24 +150,14 @@ public class UpdateCustomerViewController implements Initializable {
         divisionComboBox.setPromptText(LanguageHandler.getLocaleString("Division"));
         phoneNumberTextField.setPromptText(LanguageHandler.getLocaleString("Phone Number"));
         zipCodeTextField.setPromptText(LanguageHandler.getLocaleString("Postal Code"));
-        updateButton.setText(LanguageHandler.getLocaleString("Update"));
+        updateButton.setText(LanguageHandler.getLocaleString("Add"));
         returnButton.setText(LanguageHandler.getLocaleString("Return"));
 
         // Initializing comboboxes
         countryComboBox.setItems(Country.getCountryList());
-        countryComboBox.setValue(customer.getDivision().getCountry());
         divisionComboBox.setItems(Division.getDivisionFilteredList());
-        divisionComboBox.setValue(customer.getDivision());
 
-        // Pre-populating fields
-        IdTextField.setText("Customer ID: " + Integer.toString(customer.getCustomerID()));
-        addressTextField.setText(customer.getAddress());
-        nameTextField.setText(customer.getCustomerName());
-        zipCodeTextField.setText(customer.getPostalCode());
-        phoneNumberTextField.setText(customer.getPhoneNumber());
-
-
-        // Screen Dragging Listeners
+        //Screen Dragging Listeners
         containerAnchorPane.setOnMousePressed(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -180,9 +174,8 @@ public class UpdateCustomerViewController implements Initializable {
         });
 
         Platform.runLater(() -> {
-            apptIdHBox.requestFocus();
+            customerIdHbox.requestFocus();
         });
-
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -220,20 +213,5 @@ public class UpdateCustomerViewController implements Initializable {
             return false;
         }
         return true;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // SETTERS --------------------------------------------------------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-
-    public static void setCustomer(Customer customer) {
-        UpdateCustomerViewController.customer = customer;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // GETTERS ---------------------------------------------------------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    public static Customer getCustomer() {
-        return customer;
     }
 }

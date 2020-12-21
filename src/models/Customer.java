@@ -1,5 +1,6 @@
 package models;
 
+import controllers.UpdateCustomerViewController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -81,17 +82,14 @@ public class Customer {
         return false;
     }
 
-    /*public static boolean refreshCustomer(Customer customer){
+    public static boolean refreshCustomer(Customer customer){
         System.out.println("Reloading Customer.");
         int index = customerList.indexOf(customer);
-        //Customer refreshedCustomer = DBQuery.loadCustomer(customer.getCustomerID());
-        //customerList.set(index, refreshedCustomer);
-        //UpdateCustomerViewController.setCustomer(refreshedCustomer)
-
-
+        Customer refreshedCustomer = DBQuery.loadCustomer(customer.getCustomerID());
+        customerList.set(index, refreshedCustomer);
+        UpdateCustomerViewController.setCustomer(refreshedCustomer);
+        return true;
     }
-
-     */
 
     /**
      * Searches for and returns a Customer object that has a specific customer ID.

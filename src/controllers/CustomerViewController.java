@@ -30,8 +30,15 @@ import java.util.ResourceBundle;
 
 public class CustomerViewController implements Initializable {
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // STATIC VARIABLES ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private static Customer selectedCustomer;
     public static Stage popupStage;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // FXML VARIABLES ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     @FXML
     private TableView<Customer> customerViewTable;
@@ -66,11 +73,31 @@ public class CustomerViewController implements Initializable {
     @FXML
     private Label customerViewMessageLabel;
 
+    /**
+     * Opens the AddCustomerView in a separate stage. This function will set the initModality of the new stage to
+     * Modality.WINDOW_MODAL and the owner will be the stage assigned to Main.pStage.
+     * @param event The event that causes the method to be called.
+     */
     @FXML
     void addButtonOnClick(ActionEvent event) {
-
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("../views/AddCustomerView.fxml"));
+            popupStage = new Stage();
+            popupStage.initStyle(StageStyle.UNDECORATED);
+            popupStage.initOwner(Main.getpStage());
+            popupStage.initModality(Modality.WINDOW_MODAL);
+            popupStage.setScene(new Scene(root));
+            popupStage.show();
+        } catch (IOException e){
+            e.printStackTrace();
+            System.out.println("Error ( CustomerViewController.addButtonOnClick() ): " + e.getMessage());
+        }
     }
 
+    /**
+     * Removes the CustomerViewController.selectedCustomer object from the customerList and database customers table.
+     * @param event event that causes the function to fire.
+     */
     @FXML
     void deleteButtonOnClick(ActionEvent event) {
         if (CustomerViewController.getSelectedCustomer() == null) {
@@ -99,6 +126,11 @@ public class CustomerViewController implements Initializable {
         customerViewTable.getSelectionModel().clearSelection();
     }
 
+    /**
+     * Opens the UpdateCustomerView in a separate stage. This function will set the initModality of the new stage to
+     * Modality.WINDOW_MODAL and the owner will be the stage assigned to Main.pStage.
+     * @param event The event that causes the method to be called.
+     */
     @FXML
     void updateButtonOnClick(ActionEvent event) {
         if(CustomerViewController.getSelectedCustomer() == null){
@@ -147,18 +179,35 @@ public class CustomerViewController implements Initializable {
         customerViewTable.getSelectionModel().selectedItemProperty().addListener((observableValue, customer, newSelection) -> setSelectedCustomer(newSelection));
     }
 
-    // SETTERS ---------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+    // SETTERS----------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Assigns the selected customer in the customerTableView to the CustomerViewController.selectedCustomer variable.
+     * @param selectedCustomer   The appointment to be assigned.
+     */
     public static void setSelectedCustomer(Customer selectedCustomer) {
         CustomerViewController.selectedCustomer = selectedCustomer;
         System.out.println("Selected Customer: " + CustomerViewController.selectedCustomer);
     }
 
+    //------------------------------------------------------------------------------------------------------------------
     // GETTERS ---------------------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the selected customer in the customer Table View.
+     * @return The selected customer in the customer Table View.
+     */
     public static Customer getSelectedCustomer() {
         return selectedCustomer;
     }
 
+    /**
+     * Returns the popupStage
+     * @return popupStage
+     */
     public static Stage getPopupStage() {
         return popupStage;
     }

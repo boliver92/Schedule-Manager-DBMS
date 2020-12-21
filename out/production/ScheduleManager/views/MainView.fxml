@@ -11,7 +11,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="anchorContainer" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainViewController">
    <children>
       <Pane prefHeight="768.0" prefWidth="200.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #2193b0, #6dd5ed);">
@@ -49,7 +48,8 @@
                         <Insets bottom="3.0" />
                      </VBox.margin>
                   </Button>
-                  <Button fx:id="contactButton" mnemonicParsing="false" onAction="#contactButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #6dd5ed;" text="Contacts">
+                  <HBox prefHeight="404.0" prefWidth="206.0" />
+                  <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logoutButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #6dd5ed;" text="Logout">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -60,32 +60,14 @@
                         <Insets bottom="3.0" />
                      </VBox.margin>
                   </Button>
-                  <HBox prefHeight="48.0" prefWidth="206.0">
-                     <children>
-                        <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logoutButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="101.0" style="-fx-background-color: #6dd5ed;" text="Logout">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                           <HBox.margin>
-                              <Insets right="1.0" />
-                           </HBox.margin>
-                        </Button>
-                        <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="97.0" style="-fx-background-color: #6dd5ed;" text="Exit">
-                           <font>
-                              <Font name="System Bold" size="18.0" />
-                           </font>
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                           <HBox.margin>
-                              <Insets left="1.0" />
-                           </HBox.margin>
-                        </Button>
-                     </children>
-                  </HBox>
+                  <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exitButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #6dd5ed;" text="Exit">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
                </children>
             </VBox>
          </children>
