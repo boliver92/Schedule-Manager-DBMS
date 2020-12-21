@@ -61,7 +61,7 @@ public class MainViewController implements Initializable {
 
     @FXML
     void customerButtonOnClick(ActionEvent event) {
-
+        loadCustomerView();
     }
 
     @FXML
@@ -125,6 +125,16 @@ public class MainViewController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("../views/AppointmentView.fxml"));
             Node appointmentScene = loader.load();
             subAnchorContainer.getChildren().setAll(appointmentScene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadCustomerView(){
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../views/CustomerView.fxml"));
+            Node customerScene = loader.load();
+            subAnchorContainer.getChildren().setAll(customerScene);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -303,17 +303,38 @@ public class DBQuery {
         DBConnection.closeConnection();
         return false;
     }
+    public static boolean removeCustomer(Customer customer){
+        System.out.println("Attempting to remove customer object from database: " + customer);
+        Connection conn = DBConnection.startConnection();
+
+        try(PreparedStatement ps = conn.prepareStatement("DELETE FROM customers WHERE Customer_ID = ?")){
+
+            ps.setInt(1, customer.getCustomerID());
+
+            int rs = ps.executeUpdate();
+            if(rs > 0){
+                System.out.println("Customer ID# " + customer.getCustomerID() + " was removed successfully.");
+                DBConnection.closeConnection();
+                return true;
+            }
+            else {
+                System.out.println("Alert: Customer ID# " + customer.getCustomerID() + " removal was unsuccessful!.");
+                DBConnection.closeConnection();
+                return false;
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("SQL Error (removeAppointment): " + e.getMessage());
+            DBConnection.closeConnection();
+        }
+        DBConnection.closeConnection();
+        return false;
+    }
 
     // UPDATE ---------------------------------------------------------------------------------------------------------
-    public static boolean updateAppointment(Appointment appointment,
-                                                String title,
-                                                String description,
-                                                String location,
-                                                String type,
-                                                String start,
-                                                String end,
-                                                int customerId,
-                                                int contactId){
+    public static boolean updateAppointment(Appointment appointment, String title, String description, String location,
+                                            String type, String start, String end, int customerId, int contactId){
         System.out.println("Database - Updating appointment: " + appointment);
         Connection conn = DBConnection.startConnection();
         try(PreparedStatement ps = conn.prepareStatement("UPDATE appointments SET Title = ?, Description = ?, Location = ?, Type = ?, Start = ?, End = ?, Last_Update = ?, Last_Updated_By = ?, Customer_ID = ?, User_ID = ?, Contact_ID = ? WHERE Appointment_ID = ?")){

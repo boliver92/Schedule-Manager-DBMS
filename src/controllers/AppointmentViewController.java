@@ -136,6 +136,8 @@ public class AppointmentViewController implements Initializable{
             appointmentViewMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
             appointmentViewMessageLabel.setText(LanguageHandler.getLocaleString("There was an error with removing the selected appointment Please try again"));
         }
+        appointmentViewTable.getSelectionModel().clearSelection();
+
     }
 
     /**

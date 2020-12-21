@@ -105,6 +105,22 @@ public class Appointment {
         return false;
     }
 
+    public static boolean findByCustomerId(int customerId){
+        for(Appointment appointment : appointmentList){
+            if(appointment.getCustomerId() == customerId)
+                return true;
+        }
+        return false;
+    }
+
+    public static boolean exists(Customer customer){
+        for(Appointment appointment : appointmentList){
+            if(appointment.getCustomer() == customer){
+                return true;
+            }
+        }
+        return false;
+    }
     /**
      * Takes an appointment object as an input and adds it to the appointmentList. This is required to keep the object
      * persistent and to use the object with methods that utilize the Observablelist.

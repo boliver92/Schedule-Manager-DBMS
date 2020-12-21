@@ -2,11 +2,13 @@ package models;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 
 public class Division {
 
     // Static Variables -----------------------------------------------------------------------------------------------
     private static ObservableList<Division> divisionList = FXCollections.observableArrayList();
+    private static FilteredList<Division> divisionFilteredList = new FilteredList<>(divisionList, s -> false);
 
     // Instance Variables ---------------------------------------------------------------------------------------------
     private int divisionId;
@@ -70,15 +72,17 @@ public class Division {
         return divisionName;
     }
 
+    public Country getCountry() {
+        return country;
+    }
+
+    public static FilteredList<Division> getDivisionFilteredList() {
+        return divisionFilteredList;
+    }
 
     // Standard Overrides ---------------------------------------------------------------------------------------------
     @Override
     public String toString() {
-        return "Division{" +
-                "divisionId=" + divisionId +
-                ", divisionName='" + divisionName + '\'' +
-                ", countryId=" + countryId +
-                ", country=" + country.getCountryName() +
-                '}';
+        return getDivisionName();
     }
 }

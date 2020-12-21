@@ -3,6 +3,7 @@ package models;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import utils.DBQuery;
 
 import java.time.ZonedDateTime;
 import java.util.Comparator;
@@ -21,6 +22,7 @@ public class Customer {
     private String phoneNumber;
     private int divisionID;
     private Division division;
+    private String formattedAddress;
 
     // Constructor ----------------------------------------------------------------------------------------------------
     public Customer(){}
@@ -34,7 +36,7 @@ public class Customer {
 
         // Relationship Mapping
         this.division = Division.findById(this.divisionID);
-
+        this.formattedAddress = this.address + ", " + this.division.getDivisionName() + ", " + this.division.getCountry().getCountryName() + " " + this.postalCode;
         System.out.println(this);
     }
 
@@ -62,6 +64,35 @@ public class Customer {
         }
     }
 
+    public static boolean removeCustomer(Customer customer){
+        if(Appointment.exists(customer)){
+            System.out.println("Customer has related appointment.");
+            return false;
+        }
+        if(DBQuery.removeCustomer(customer)){
+            if(customerList.remove(customer)){
+                System.out.println("The customer was successfully removed from the customerList");
+                return true;
+            }
+        } else {
+            System.out.println("Error ( Customer.removeCustomer() ) : The customer was not removed from the customerList");
+            return false;
+        }
+        return false;
+    }
+
+    /*public static boolean refreshCustomer(Customer customer){
+        System.out.println("Reloading Customer.");
+        int index = customerList.indexOf(customer);
+        //Customer refreshedCustomer = DBQuery.loadCustomer(customer.getCustomerID());
+        //customerList.set(index, refreshedCustomer);
+        //UpdateCustomerViewController.setCustomer(refreshedCustomer)
+
+
+    }
+
+     */
+
     /**
      * Searches for and returns a Customer object that has a specific customer ID.
      * @param   customerID   int of the customer ID to be searched
@@ -86,6 +117,26 @@ public class Customer {
 
     public int getCustomerID() {
         return customerID;
+    }
+
+    public String getFormattedAddress() {
+        return formattedAddress;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public Division getDivision() {
+        return division;
     }
 
     /**

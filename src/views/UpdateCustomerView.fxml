@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="containerAnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="460.0" prefWidth="698.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #2193b0, #6dd5ed);" stylesheets="@resources/styles/stylesheet.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.UpdateCustomerViewController">
+   <children>
+      <AnchorPane layoutX="140.0" prefHeight="460.0" prefWidth="419.0" style="-fx-background-color: white;">
+         <effect>
+            <DropShadow />
+         </effect>
+         <children>
+            <Label fx:id="updateAppUITitleLabel" layoutX="14.0" layoutY="14.0" prefHeight="29.0" prefWidth="383.0" text="Update Customer">
+               <font>
+                  <Font name="Rockwell" size="24.0" />
+               </font>
+            </Label>
+            <HBox fx:id="apptIdHBox" alignment="CENTER" layoutX="108.0" layoutY="70.0" prefHeight="24.0" prefWidth="233.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-background-color: #dfe6e9;">
+               <children>
+                  <TextField fx:id="IdTextField" alignment="CENTER" disable="true" prefHeight="25.0" prefWidth="190.0" promptText="Customer ID" style="-fx-background-color: #dfe6e9; -fx-text-inner-color: #636e72;">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+               </children>
+               <effect>
+                  <DropShadow blurType="TWO_PASS_BOX" height="9.14" radius="4.07" width="9.14" />
+               </effect>
+            </HBox>
+            <HBox alignment="CENTER" layoutX="108.0" layoutY="107.0" prefHeight="24.0" prefWidth="233.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-background-color: #dfe6e9;">
+               <children>
+                  <TextField fx:id="nameTextField" alignment="CENTER" prefHeight="25.0" prefWidth="190.0" promptText="Name" style="-fx-background-color: #dfe6e9; -fx-text-inner-color: #2d3436;">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+               </children>
+               <effect>
+                  <DropShadow blurType="TWO_PASS_BOX" height="9.14" radius="4.07" width="9.14" />
+               </effect>
+            </HBox>
+            <HBox fx:id="searchHBox2" alignment="CENTER" layoutX="108.0" layoutY="143.0" prefHeight="24.0" prefWidth="233.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-background-color: #dfe6e9;">
+               <children>
+                  <TextField fx:id="addressTextField" alignment="CENTER" prefHeight="25.0" prefWidth="190.0" promptText="Address" style="-fx-background-color: #dfe6e9; -fx-text-inner-color: #2d3436;">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+               </children>
+               <effect>
+                  <DropShadow blurType="TWO_PASS_BOX" height="9.14" radius="4.07" width="9.14" />
+               </effect>
+            </HBox>
+            <Button fx:id="updateButton" layoutX="154.0" layoutY="344.0" mnemonicParsing="false" onAction="#updateButtonOnClick" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Update">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <effect>
+                  <DropShadow blurType="ONE_PASS_BOX" height="15.5" radius="5.875" width="10.0" />
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Button fx:id="returnButton" layoutX="228.0" layoutY="344.0" mnemonicParsing="false" onAction="#returnButtonOnClick" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Return">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+               <effect>
+                  <DropShadow blurType="ONE_PASS_BOX" height="15.5" radius="5.875" width="10.0" />
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Label fx:id="uiMessageLabel" alignment="CENTER" layoutX="31.0" layoutY="43.0" prefHeight="29.0" prefWidth="383.0">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="countryComboBox" layoutX="111.0" layoutY="180.0" prefHeight="30.0" prefWidth="233.0" promptText="Country" />
+            <ComboBox fx:id="divisionComboBox" layoutX="110.0" layoutY="219.0" prefHeight="30.0" prefWidth="233.0" promptText="Division" />
+            <HBox fx:id="searchHBox21" alignment="CENTER" layoutX="109.0" layoutY="256.0" prefHeight="24.0" prefWidth="233.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-background-color: #dfe6e9;">
+               <children>
+                  <TextField fx:id="zipCodeTextField" alignment="CENTER" prefHeight="25.0" prefWidth="190.0" promptText="Postal Code" style="-fx-background-color: #dfe6e9; -fx-text-inner-color: #2d3436;">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+               </children>
+               <effect>
+                  <DropShadow blurType="TWO_PASS_BOX" height="9.14" radius="4.07" width="9.14" />
+               </effect>
+            </HBox>
+            <HBox fx:id="searchHBox211" alignment="CENTER" layoutX="111.0" layoutY="293.0" prefHeight="24.0" prefWidth="233.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-background-color: #dfe6e9;">
+               <children>
+                  <TextField fx:id="phoneNumberTextField" alignment="CENTER" prefHeight="25.0" prefWidth="190.0" promptText="Phone Number" style="-fx-background-color: #dfe6e9; -fx-text-inner-color: #2d3436;">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+               </children>
+               <effect>
+                  <DropShadow blurType="TWO_PASS_BOX" height="9.14" radius="4.07" width="9.14" />
+               </effect>
+            </HBox>
+         </children>
+      </AnchorPane>
+   </children>
+   <effect>
+      <DropShadow />
+   </effect>
+</AnchorPane>

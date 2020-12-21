@@ -14,7 +14,7 @@
 
 .date-picker .text-field {
     -fx-control-inner-background: #dfe6e9;
-    -fx-font: 14px;
+    -fx-font-size: 14px;
     -fx-alignment: center;
     -fx-font-weight: bold;
 }
@@ -22,7 +22,7 @@
 .combo-box-base {
     -fx-text-fill:  #2d3436;
     -fx-prompt-text-fill: #2d3436;
-    -fx-font: 14px;
+    -fx-font-size: 14px;
     -fx-text-alignment: center;
     -fx-font-weight: bold;
 }

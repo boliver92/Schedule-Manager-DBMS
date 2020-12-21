@@ -18,14 +18,14 @@
             <DropShadow />
          </effect>
          <children>
-            <Label fx:id="addApptUITitleLabel" layoutX="14.0" layoutY="14.0" text="Add Appointment">
+            <Label fx:id="addApptUITitleLabel" layoutX="14.0" layoutY="14.0" prefHeight="29.0" prefWidth="383.0" text="Add Appointment">
                <font>
                   <Font name="Rockwell" size="24.0" />
                </font>
             </Label>
             <HBox fx:id="apptIdHBox" alignment="CENTER" layoutX="108.0" layoutY="70.0" prefHeight="24.0" prefWidth="233.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-background-color: #dfe6e9;">
                <children>
-                  <TextField fx:id="apptIdTextField" alignment="CENTER" disable="true" prefHeight="25.0" prefWidth="190.0" promptText="Appointment ID" style="-fx-background-color: #dfe6e9; -fx-text-inner-color: #636e72;">
+                  <TextField fx:id="apptIdTextField" alignment="CENTER" disable="true" prefHeight="30.0" prefWidth="220.0" promptText="Appointment ID" style="-fx-background-color: #dfe6e9; -fx-text-inner-color: #636e72;">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -117,7 +117,7 @@
             </HBox>
             <ComboBox fx:id="apptCustomerComboBox" layoutX="125.0" layoutY="339.0" prefHeight="30.0" prefWidth="190.0" promptText="Customer" />
             <ComboBox fx:id="apptContactComboBox" layoutX="125.0" layoutY="378.0" prefHeight="30.0" prefWidth="190.0" promptText="Contact" />
-            <Button fx:id="addButton" layoutX="138.0" layoutY="416.0" mnemonicParsing="false" onAction="#addButtonOnClick" prefWidth="65.0" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Add">
+            <Button fx:id="addButton" layoutX="138.0" layoutY="416.0" mnemonicParsing="false" onAction="#addButtonOnClick" prefHeight="30.0" prefWidth="78.0" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Add">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
@@ -128,7 +128,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </Button>
-            <Button fx:id="returnButton" layoutX="237.0" layoutY="416.0" mnemonicParsing="false" onAction="#returnButtonOnClick" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Return">
+            <Button fx:id="returnButton" layoutX="224.0" layoutY="416.0" mnemonicParsing="false" onAction="#returnButtonOnClick" prefHeight="30.0" prefWidth="78.0" style="-fx-background-color: #e17055; -fx-text-fill: #2d3436;" text="Return">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>

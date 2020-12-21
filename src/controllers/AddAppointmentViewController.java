@@ -131,6 +131,21 @@ public class AddAppointmentViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
+        apptIdTextField.setPromptText(LanguageHandler.getLocaleString("Appointment ID") + " - " + LanguageHandler.getLocaleString("Disabled-auto"));
+        apptTitleTextField.setPromptText(LanguageHandler.getLocaleString("Title"));
+        apptDescriptionTextField.setPromptText(LanguageHandler.getLocaleString("Description"));
+        apptLocationTextField.setPromptText(LanguageHandler.getLocaleString("Location"));
+        apptTypeTextField.setPromptText(LanguageHandler.getLocaleString("Type"));
+        apptCustomerComboBox.setPromptText(LanguageHandler.getLocaleString("Customer"));
+        apptContactComboBox.setPromptText(LanguageHandler.getLocaleString("Contact"));
+        apptStartDatePicker.setPromptText(LanguageHandler.getLocaleString("Start Date"));
+        apptStartTimeComboBox.setPromptText(LanguageHandler.getLocaleString("Start Time"));
+        apptEndDatePicker.setPromptText(LanguageHandler.getLocaleString("End Date"));
+        apptEndTimeComboBox.setPromptText(LanguageHandler.getLocaleString("End Time"));
+        addButton.setText(LanguageHandler.getLocaleString("Add"));
+        returnButton.setText(LanguageHandler.getLocaleString("Return"));
+        addApptUITitleLabel.setText(LanguageHandler.getLocaleString("Add Appointment"));
+
         // Populating combobox`
         apptCustomerComboBox.setItems(Customer.getCustomerSortedList());
         apptContactComboBox.setItems(Contact.getContactSortedList());

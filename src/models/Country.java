@@ -66,12 +66,17 @@ public class Country {
         return country;
     }
 
+    public static ObservableList<Country> getCountryList() {
+        return countryList;
+    }
+
+    public int getCountryID() {
+        return countryID;
+    }
+
     // STANDARD OVERRIDES ---------------------------------------------------------------------------------------------
     @Override
     public String toString() {
-        return "Country{" +
-                "countryID=" + countryID +
-                ", country='" + country + '\'' +
-                '}';
+        return getCountryName();
     }
 }

@@ -1,6 +1,5 @@
 package controllers;
 
-import ScheduleManager.Main;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -15,14 +14,10 @@ import models.*;
 import utils.DBQuery;
 import utils.LanguageHandler;
 import views.resources.styles.Colors;
-
 import java.net.URL;
-import java.sql.Time;
+import java.nio.file.attribute.AclEntryFlag;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
@@ -86,6 +81,9 @@ public class UpdateAppointmentViewController implements Initializable {
     private Label uiMessageLabel;
 
     @FXML
+    private Label updateAppUITitleLabel;
+
+    @FXML
     void returnButtonOnClick(ActionEvent event) {
         AppointmentViewController.getPopupStage().close();
     }
@@ -94,7 +92,7 @@ public class UpdateAppointmentViewController implements Initializable {
     void updateButtonOnClick(ActionEvent event) {
         if(validatedTextFields()){
             uiMessageLabel.setTextFill(Color.web(Colors.SUCCESS.toString()));
-            uiMessageLabel.setText("Updating Appointment Information. . . ");
+            uiMessageLabel.setText(LanguageHandler.getLocaleString("Updating appointment information"));
             // TODO: Update appointment object... By replacement or setters?
             Convert dateTime = (date, time) -> ZonedDateTime.of(date.getValue(), LocalTime.parse(TimeFunctions.convertToShort(time.getValue())), ZoneId.of((TimeZone.getDefault().getID()))).toInstant();
             Instant start = dateTime.toInstant(apptStartDatePicker, apptStartTimeComboBox);
@@ -116,17 +114,17 @@ public class UpdateAppointmentViewController implements Initializable {
                     apptContactComboBox.getValue().getContactID()
                     )){
                 if(Appointment.refreshAppointment(appointment)){
-                    uiMessageLabel.setText("Update successful!");
+                    uiMessageLabel.setText(LanguageHandler.getLocaleString("Update Successful"));
                 }
                 else {
                     uiMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
-                    uiMessageLabel.setText("Unable to refresh the appointment.");
+                    uiMessageLabel.setText(LanguageHandler.getLocaleString("Unable to refresh the appointment"));
                 }
 
             }
             else {
                 uiMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
-                uiMessageLabel.setText("Unable to update the database..");
+                uiMessageLabel.setText(LanguageHandler.getLocaleString("Unable to update the database"));
             }
 
         }
@@ -139,6 +137,22 @@ public class UpdateAppointmentViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         UpdateAppointmentViewController.setAppointment(AppointmentViewController.getSelectedAppointment());
+
+        apptTitleTextField.setPromptText(LanguageHandler.getLocaleString("Title"));
+        apptDescriptionTextField.setPromptText(LanguageHandler.getLocaleString("Description"));
+        apptLocationTextField.setPromptText(LanguageHandler.getLocaleString("Location"));
+        apptTypeTextField.setPromptText(LanguageHandler.getLocaleString("Type"));
+        apptCustomerComboBox.setPromptText(LanguageHandler.getLocaleString("Customer"));
+        apptContactComboBox.setPromptText(LanguageHandler.getLocaleString("Contact"));
+        apptStartDatePicker.setPromptText(LanguageHandler.getLocaleString("Start Date"));
+        apptStartTimeComboBox.setPromptText(LanguageHandler.getLocaleString("Start Time"));
+        apptEndDatePicker.setPromptText(LanguageHandler.getLocaleString("End Date"));
+        apptEndTimeComboBox.setPromptText(LanguageHandler.getLocaleString("End Time"));
+        updateButton.setText(LanguageHandler.getLocaleString("Update"));
+        returnButton.setText(LanguageHandler.getLocaleString("Return"));
+        updateAppUITitleLabel.setText(LanguageHandler.getLocaleString("Update Appointment"));
+
+
         // Populating comboboxes.
         apptCustomerComboBox.setItems(Customer.getCustomerSortedList());
         apptContactComboBox.setItems(Contact.getContactSortedList());
@@ -158,7 +172,7 @@ public class UpdateAppointmentViewController implements Initializable {
 
         //Pre-populating fields
 
-        apptIdTextField.setText(Integer.toString(UpdateAppointmentViewController.getAppointment().getAppointmentId()));
+        apptIdTextField.setText(LanguageHandler.getLocaleString("Appointment ID") + ": " + Integer.toString(UpdateAppointmentViewController.getAppointment().getAppointmentId()));
         apptTitleTextField.setText(UpdateAppointmentViewController.getAppointment().getTitle());
         apptDescriptionTextField.setText(UpdateAppointmentViewController.getAppointment().getDescription());
         apptLocationTextField.setText(UpdateAppointmentViewController.getAppointment().getLocation());
