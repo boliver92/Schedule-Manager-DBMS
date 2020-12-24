@@ -168,7 +168,7 @@ public class AddAppointmentViewController implements Initializable {
         apptEndDatePicker.setPromptText(LanguageHandler.getLocaleString("End Date"));
         apptEndTimeComboBox.setPromptText(LanguageHandler.getLocaleString("End Time"));
         addButton.setText(LanguageHandler.getLocaleString("Add"));
-        returnButton.setText(LanguageHandler.getLocaleString("Return"));
+        returnButton.setText(LanguageHandler.getLocaleString("Return_btn"));
         addApptUITitleLabel.setText(LanguageHandler.getLocaleString("Add Appointment"));
 
         // Populating combobox`
@@ -260,6 +260,18 @@ public class AddAppointmentViewController implements Initializable {
             return false;
         }
 
+        Convert dateTime = (date, time) -> ZonedDateTime.of(date.getValue(), LocalTime.parse(TimeFunctions.convertToShort(time.getValue())), ZoneId.of((TimeZone.getDefault().getID()))).toInstant();
+        Instant start = dateTime.toInstant(apptStartDatePicker, apptStartTimeComboBox);
+        Instant end = dateTime.toInstant(apptEndDatePicker, apptEndTimeComboBox);
+        if(start.isAfter(end) || start.equals(end) || end.isBefore(start)){
+            uiMessageLabel.setText(LanguageHandler.getLocaleString("Please check the start and end dates and times"));
+            return false;
+        }
+
+        if(Appointment.hasConflictingTime(start, end)){
+            uiMessageLabel.setText(LanguageHandler.getLocaleString("There is another appointment at this time"));
+            return false;
+        }
         return true;
     }
 }

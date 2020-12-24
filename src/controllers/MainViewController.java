@@ -14,8 +14,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import models.Appointment;
 import utils.LanguageHandler;
+import views.resources.styles.Colors;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,6 +32,12 @@ public class MainViewController implements Initializable {
     // INSTANCE VARIABLES ------------------------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
     private double xOffset, yOffset;
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // STATIC VARIABLES ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    private static Stage popupStage;
+    private static boolean appointmentOnStartup = false;
 
     @FXML
     private AnchorPane anchorContainer;
@@ -52,6 +63,12 @@ public class MainViewController implements Initializable {
     @FXML
     private AnchorPane subAnchorContainer;
 
+    @FXML
+    private Button reportsButton;
+
+    @FXML
+    private Label mainViewLabel;
+
     // -----------------------------------------------------------------------------------------------------------------
     // FXML Methods ----------------------------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
@@ -63,6 +80,7 @@ public class MainViewController implements Initializable {
     @FXML
     void appointmentButtonOnClick(ActionEvent event) {
         loadAppointmentView();
+        resetSelections();
     }
 
     /**
@@ -72,6 +90,7 @@ public class MainViewController implements Initializable {
     @FXML
     void customerButtonOnClick(ActionEvent event) {
         loadCustomerView();
+        resetSelections();
     }
 
     /**
@@ -92,6 +111,13 @@ public class MainViewController implements Initializable {
     @FXML
     void logoutButtonOnClick(ActionEvent event) {
         loadLoginView();
+        resetSelections();
+    }
+
+    @FXML
+    void reportsButtonOnClick(ActionEvent event) {
+        loadReportsView();
+        resetSelections();
     }
 
     /**
@@ -110,6 +136,7 @@ public class MainViewController implements Initializable {
         customerButton.setText(LanguageHandler.getLocaleString("main_Customers"));
         exitButton.setText(LanguageHandler.getLocaleString("exit"));
         logoutButton.setText(LanguageHandler.getLocaleString("Logout"));
+        reportsButton.setText(LanguageHandler.getLocaleString("Reports"));
 
         // Mouse events to move the window.
         anchorContainer.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -128,6 +155,13 @@ public class MainViewController implements Initializable {
         });
 
         System.out.println("MainView.fxml loaded and initialized.");
+
+        Platform.runLater(() -> {
+            if(Appointment.hasUpcomingAppointment()){
+                MainViewController.setAppointmentOnStartup(true);
+                loadUpcomingAppointment();
+            }
+        });
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -174,5 +208,49 @@ public class MainViewController implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    /**
+     * Opens the ReportView.fxml and displays it in the subAnchorContainer anchorpane.
+     */
+    private void loadReportsView(){
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../views/ReportView.fxml"));
+            Node reportsScene = loader.load();
+            subAnchorContainer.getChildren().setAll(reportsScene);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadUpcomingAppointment(){
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("../views/UpcomingAppointmentView.fxml"));
+            popupStage = new Stage();
+            popupStage.initStyle(StageStyle.UNDECORATED);
+            popupStage.initOwner(Main.getpStage());
+            popupStage.initModality(Modality.WINDOW_MODAL);
+            popupStage.setScene(new Scene(root));
+            popupStage.show();
+        } catch (IOException e){
+            e.printStackTrace();
+            System.out.println("Error ( MainViewController.loadUpcomingAppointment() ): " + e.getMessage());
+        }
+    }
+
+    public static Stage getPopupStage() {
+        return popupStage;
+    }
+
+    public static boolean getAppointmentOnStartup(){
+        return appointmentOnStartup;
+    }
+
+    public static void setAppointmentOnStartup(boolean appointmentOnStartup) {
+        MainViewController.appointmentOnStartup = appointmentOnStartup;
+    }
+
+    public void resetSelections(){
+        AppointmentViewController.setSelectedAppointment(null);
+        CustomerViewController.setSelectedCustomer(null);
     }
 }

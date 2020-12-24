@@ -10,36 +10,37 @@ import java.util.Properties;
 
 public class DBConnection {
 
-    // JDBC URL parts
+    // -----------------------------------------------------------------------------------------------------------------
+    // Static Variables ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private static String connectionString = null;
     private static String username = null;
     private static String password = null;
     private static Connection conn = null;
 
-    public static Connection startConnection()
-    {
-        try{
-            conn = DriverManager.getConnection(connectionString, username, password);
-            System.out.println("Database Connection Successful!");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return conn;
-    }
+    // -----------------------------------------------------------------------------------------------------------------
+    // STATIC METHODS --------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
+    /**
+     * Closes open database connection if it is open.
+     */
     public static void closeConnection() {
-        try{
+        try {
             conn.close();
             System.out.println("Database Connection Closed!");
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Error: " + e.getMessage());
         }
 
     }
 
-    public static void setupDB(){
+    /**
+     * Initializes the connectionString, username, and password variables with information located in the config.properties
+     * file. This function must be called before any subsequent DBConnection.startConnection() calls.
+     */
+    public static void setupDB() {
         Properties dbProps = new Properties();
         try {
             dbProps.load(new FileInputStream("src/utils/config.properties"));
@@ -52,16 +53,16 @@ public class DBConnection {
         }
     }
 
-    public static Connection getConnection() {
+    /**
+     * Starts and returns the connection to the database.
+     * @return Connection
+     */
+    public static Connection startConnection() {
         try {
-            if(conn.isClosed()){
-                System.out.println("Get Database Connection Called! No connection established.");
-                System.out.println("Opening a new Database Connection.");
-                startConnection();
-            }
+            conn = DriverManager.getConnection(connectionString, username, password);
+            System.out.println("Database Connection Successful!");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-            System.out.println("Error: " + throwables.getMessage());
         }
         return conn;
     }

@@ -11,11 +11,15 @@ import java.util.Comparator;
 
 public class Customer {
 
-    // Static Variables -----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // Static Variables ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private static ObservableList<Customer> customerList = FXCollections.observableArrayList();
     private static SortedList<Customer> customerSortedList = new SortedList<>(customerList, Comparator.comparing(Customer::getCustomerName));
 
-    // Instance Variables ---------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // Instance Variables ----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private int customerID;
     private String customerName;
     private String address;
@@ -25,7 +29,9 @@ public class Customer {
     private Division division;
     private String formattedAddress;
 
-    // Constructor ----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // Constructor -----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     public Customer(){}
     public Customer(int customerID, String customerName, String address, String postalCode, String phoneNumber, int divisionID){
         this.customerID = customerID;
@@ -41,10 +47,74 @@ public class Customer {
         System.out.println(this);
     }
 
-    // Instance Methods -----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // INSTANCE METHODS ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
+        // -------------------------------------------------------------------------------------------------------------
+        // INSTANCE GETTERS --------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
 
-    // Static Methods -------------------------------------------------------------------------------------------------
+    /**
+     * Returns the Customer object's name
+     * @return  customerName as String
+     */
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    /**
+     * Returns the Customer object's ID
+     * @return  customerID as int
+     */
+    public int getCustomerID() {
+        return customerID;
+    }
+
+    /**
+     * Returns the Customer object's formatted address.
+     * @return  formattedAddress as String
+     */
+    public String getFormattedAddress() {
+        return formattedAddress;
+    }
+
+    /**
+     * Returns the Customer object's phone number.
+     * @return  phoneNumber as String
+     */
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    /**
+     * Returns the Customer object's unformatted address.
+     * @return  address as String
+     */
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * Returns the Customer object's postal code.
+     * @return  postalCode as String
+     */
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    /**
+     * Returns the Customer object's division.
+     * @return  division as Division
+     */
+    public Division getDivision() {
+        return division;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // STATIC METHODS --------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Takes a Customer object as an input and adds it to the customerList. This is required to keep the object
      * persistent and to use the object with methods that utilize the Observablelist.
@@ -65,6 +135,12 @@ public class Customer {
         }
     }
 
+    /**
+     * Removes the customer from the customerList and calls DBQuery method to remove the customer from the
+     * Database.
+     * @param customer The customer to be removed
+     * @return true if the customer was removed, otherwise false.
+     */
     public static boolean removeCustomer(Customer customer){
         if(Appointment.exists(customer)){
             System.out.println("Customer has related appointment.");
@@ -82,6 +158,12 @@ public class Customer {
         return false;
     }
 
+    /**
+     * Overrides the current customer in the customerList with the most recent customer in the database that has
+     * the same customerId
+     * @param customer Customer to be refreshed.
+     * @return true
+     */
     public static boolean refreshCustomer(Customer customer){
         System.out.println("Reloading Customer.");
         int index = customerList.indexOf(customer);
@@ -104,38 +186,9 @@ public class Customer {
         return null;
     }
 
-    // GETTERS --------------------------------------------------------------------------------------------------------
-    /**
-     * Returns the Customer object's name
-     * @return  customerName as String
-     */
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public int getCustomerID() {
-        return customerID;
-    }
-
-    public String getFormattedAddress() {
-        return formattedAddress;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public Division getDivision() {
-        return division;
-    }
+        // -------------------------------------------------------------------------------------------------------------
+        // STATIC GETTERS ----------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
 
     /**
      * Provides the sorted customer list.
@@ -144,6 +197,8 @@ public class Customer {
     public static SortedList<Customer> getCustomerSortedList() {
         return customerSortedList;
     }
+
+
 
     // Standard Overrides ---------------------------------------------------------------------------------------------
     @Override

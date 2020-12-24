@@ -24,6 +24,7 @@
                               <Font name="Rockwell" size="24.0" />
                            </font>
                         </Label>
+                        <Label fx:id="mainViewLabel" alignment="TOP_CENTER" layoutY="4.0" prefHeight="65.0" prefWidth="200.0" textAlignment="JUSTIFY" wrapText="true" />
                      </children>
                   </AnchorPane>
                   <Button fx:id="appointmentButton" mnemonicParsing="false" onAction="#appointmentButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #6dd5ed;" text="Appointments">
@@ -47,6 +48,14 @@
                      <VBox.margin>
                         <Insets bottom="3.0" />
                      </VBox.margin>
+                  </Button>
+                  <Button fx:id="reportsButton" mnemonicParsing="false" onAction="#reportsButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #6dd5ed;" text="Reports">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
                   </Button>
                   <HBox prefHeight="404.0" prefWidth="206.0" />
                   <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logoutButtonOnClick" opacity="0.5" prefHeight="45.0" prefWidth="200.0" style="-fx-background-color: #6dd5ed;" text="Logout">

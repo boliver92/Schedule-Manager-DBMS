@@ -1,6 +1,7 @@
 package controllers;
 
 import ScheduleManager.Main;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,6 +38,7 @@ public class AppointmentViewController implements Initializable{
 
     private static Appointment selectedAppointment;
     private static Stage popupStage;
+    private static boolean firstRun = true;
 
     @FXML
     private TableView<Appointment> appointmentViewTable;
@@ -92,6 +94,9 @@ public class AppointmentViewController implements Initializable{
     @FXML
     private DatePicker endDatePicker;
 
+    @FXML
+    private Label dateRangeLabel;
+
     // -----------------------------------------------------------------------------------------------------------------
     // FXML Methods ----------------------------------------------------------------------------------------------------
     // -----------------------------------------------------------------------------------------------------------------
@@ -129,9 +134,11 @@ public class AppointmentViewController implements Initializable{
             return;
         }
 
+        String appointmentType = getSelectedAppointment().getType();
+        int id = getSelectedAppointment().getAppointmentId();
         if(Appointment.removeAppointment(getSelectedAppointment())){
             appointmentViewMessageLabel.setTextFill(Color.web(Colors.SUCCESS.toString()));
-            appointmentViewMessageLabel.setText(LanguageHandler.getLocaleString("The appointment was removed successfully"));
+            appointmentViewMessageLabel.setText(LanguageHandler.getLocaleString("The appointment was removed successfully") + ": ID# " + id + " " + LanguageHandler.getLocaleString("Type") + ": " + appointmentType);
             setSelectedAppointment(null);
         } else {
             appointmentViewMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
@@ -182,6 +189,9 @@ public class AppointmentViewController implements Initializable{
         deleteButton.setText(LanguageHandler.getLocaleString("Delete"));
         updateButton.setText(LanguageHandler.getLocaleString("Update"));
         searchTextField.setPromptText(LanguageHandler.getLocaleString("Search by Title or ID"));
+        dateRangeLabel.setText(LanguageHandler.getLocaleString("Date Range"));
+        endDatePicker.setPromptText(LanguageHandler.getLocaleString("End Date"));
+        startDatePicker.setPromptText(LanguageHandler.getLocaleString("Start Date"));
             //Language converted column headers
         appointmentIdColumn.setText(LanguageHandler.getLocaleString("Appointment ID"));
         titleColumn.setText(LanguageHandler.getLocaleString("Title"));
@@ -316,6 +326,14 @@ public class AppointmentViewController implements Initializable{
 
         // Tableview Listener - Needed to perform functions on the selected appointment.
         appointmentViewTable.getSelectionModel().selectedItemProperty().addListener(((observableValue, appointment, newSelection) -> setSelectedAppointment(newSelection) ));
+
+        Platform.runLater(() -> {
+            if(!MainViewController.getAppointmentOnStartup() && AppointmentViewController.firstRun){
+                appointmentViewMessageLabel.setTextFill(Color.web(Colors.WARNING.toString()));
+                appointmentViewMessageLabel.setText(LanguageHandler.getLocaleString("There are no upcoming appointments"));
+                setFirstRun(false);
+            }
+        });
     }
 
     //------------------------------------------------------------------------------------------------------------------
@@ -331,6 +349,9 @@ public class AppointmentViewController implements Initializable{
         System.out.println("Selected Appointment: " + AppointmentViewController.selectedAppointment);
     }
 
+    public static void setFirstRun(boolean firstRun) {
+        AppointmentViewController.firstRun = firstRun;
+    }
 
     //------------------------------------------------------------------------------------------------------------------
     // GETTERS ---------------------------------------------------------------------------------------------------------
@@ -351,4 +372,5 @@ public class AppointmentViewController implements Initializable{
     public static Stage getPopupStage() {
         return popupStage;
     }
+
 }

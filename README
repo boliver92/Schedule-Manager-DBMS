@@ -1,0 +1,58 @@
+Title: Schedule Manager
+Purpose: Build a Schedule Manager Database Management System to manage appointment scheduling for the company
+
+Author: Brian Oliver
+Contact Information: boliv64@wgu.edu
+Application Version: Ver 1.0
+Date: 12/21/2020
+
+IDE: IntelliJ Community 2020.01
+JDK version: Java SE 11.0.4
+JavaFX version: JavaFX-SDK-11.0.2
+
+--------------------------------------Instructions--------------------------------------------------------------
+
+-Logging in-
+Enter your username and password to log in.
+
+Each attempt at logging in will be recorded in login_activity.txt
+
+Once you are logged in, you will be taken to screen showing all of the appointments. If there is an appointment time within
+15 minutes of logging in, a popup will be displayed showing the appointment information. Otherwise, the application will
+provide a message indicating that there are no upcoming appointments.
+
+--Appointments--
+You can view appointment history information by pressing the appointment button on the left sidebar.
+
+The default view of the table shows all saved appointment information. The list can be searched by the appointment ID or
+title. The list can be filtered by a range of dates using the date range options.
+
+You can add an appointment, modify/update an appointment, or delete an appointment using the corresponding buttons located
+at the top right of the table. These changes are permanent and can not be undone. Appointments can not be added/modified
+with overlapping timeframes.
+
+--Customers--
+You can view customer information by pressing the customer button on the left sidebar.
+
+The default view of the table shows all saved customer. The table can be searched by the customer ID  or name using the
+searchbar on the top left of the table.
+
+You can add a customer, modify/update an customer, or delete a customer using the corresponding buttons located
+at the top right of the table. These changes are permanent and can not be undone. A customer can not be deleted if there
+are any appointments scheduled with that customer.
+
+--Reports--
+The can view the miscellaneous reports by pressing the reports button on the left sidebar.
+
+The reports screen shows how many appointments have been scheduled by type, month, or customer. The large table shows the
+appointment schedule for each contact. The contacts can be selected from the dropdown menu.
+
+--Log Out--
+The log out button in the left column will disconnect the current user and return the application to the log in screen.
+
+--Exit--
+The exit button in the left column will close the entire application.
+
+
+--Custom Report--
+The custom report of appointment amounts per customer is located in the reports view.

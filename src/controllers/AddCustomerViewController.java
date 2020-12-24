@@ -151,7 +151,7 @@ public class AddCustomerViewController implements Initializable {
         phoneNumberTextField.setPromptText(LanguageHandler.getLocaleString("Phone Number"));
         zipCodeTextField.setPromptText(LanguageHandler.getLocaleString("Postal Code"));
         updateButton.setText(LanguageHandler.getLocaleString("Add"));
-        returnButton.setText(LanguageHandler.getLocaleString("Return"));
+        returnButton.setText(LanguageHandler.getLocaleString("Return_btn"));
 
         // Initializing comboboxes
         countryComboBox.setItems(Country.getCountryList());

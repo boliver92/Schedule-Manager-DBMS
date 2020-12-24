@@ -12,6 +12,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 public class TimeFunctions {
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Static Variables ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     private static final Map<String, String> shortToLongTimeMap = Map.ofEntries(
             Map.entry("8:00 AM EST", "08:00 AM"),
             Map.entry("8:15 AM EST", "08:15 AM"),
@@ -192,10 +197,23 @@ public class TimeFunctions {
             "10:00 PM EST"
     );
 
+    // -----------------------------------------------------------------------------------------------------------------
+    // STATIC METHODS --------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns a list of times in EST during business hours
+     * @return ObservableList(String) times
+     */
     public static ObservableList<String> getTimes() {
         return times;
     }
 
+    /**
+     * Converts time from HH:mm PM/AM EST format to hh:mm format
+     * @param time String time to convert
+     * @return converted time as String
+     */
     public static String convertToShort(String time){
         for(Map.Entry<String, String> entry : longToShortTimeMap.entrySet()){
             if(entry.getValue().equals(time))
@@ -204,6 +222,11 @@ public class TimeFunctions {
         return null;
     }
 
+    /**
+     * Converts time from hh:mm format to HH:mm PM/AM EST format
+     * @param time String time to convert
+     * @return converted time as String
+     */
     public static String convertToLong(String time){
         for(Map.Entry<String, String> entry : longToShortTimeMap.entrySet()){
             if(entry.getKey().contains(time)){
@@ -213,6 +236,10 @@ public class TimeFunctions {
         return null;
     }
 
+    /**
+     * Returns the current UTC date and time
+     * @return current UTC date and time as string.
+     */
     public static String getUtcNowFormatted(){
         Instant now = Instant.now();
         LocalDateTime nowTime = LocalDateTime.ofInstant(now, ZoneOffset.UTC);

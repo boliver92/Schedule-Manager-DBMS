@@ -1,21 +1,22 @@
 package models;
 
-import controllers.AppointmentViewController;
+import controllers.UpcomingAppointmentViewController;
 import controllers.UpdateAppointmentViewController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.scene.Parent;
 import utils.DBQuery;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.TimeZone;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 public class Appointment {
 
@@ -33,7 +34,11 @@ public class Appointment {
         return 0;
     });
     private static FilteredList<Appointment> appointmentFilteredListByDate = new FilteredList<>(appointmentSortedList, s -> true);
+    private static FilteredList<Appointment> appointmentFilteredListByContact = new FilteredList<>(appointmentSortedList, s -> false);
     private static FilteredList<Appointment>  appointmentFilteredList = new FilteredList<>(appointmentFilteredListByDate, s -> true);
+    private static Map<String, Integer> typeAmountMap = new HashMap<>();
+    private static Map<String, Integer> monthAmountMap = new HashMap<>();
+    private static Map<String, Integer> customerAmountMap = new HashMap<>();
 
     // -----------------------------------------------------------------------------------------------------------------
     // Instance Variables ----------------------------------------------------------------------------------------------
@@ -85,6 +90,14 @@ public class Appointment {
 
 
         System.out.println("New Appointment Object: " + this);
+
+        incrementMapType(type);
+        incrementCustomerMap(customer.getCustomerName());
+        try {
+            incrementMapMonth(startFormatted);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -104,6 +117,75 @@ public class Appointment {
      */
     public static boolean addToList(Appointment appointment){
         return appointmentList.add(appointment);
+    }
+
+    /**
+     * Increments the typeAmountMap to reflect the number of appointments with a matching type.
+     * @param date Date of the appointment to be mapped
+     */
+    public static void incrementMapMonth(String date) throws ParseException {
+
+        SimpleDateFormat month = new SimpleDateFormat("MMMMM");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+
+        Date fdate = sdf.parse(date);
+        String month_name = month.format(fdate);
+
+        System.out.println(month_name);
+
+        Appointment.monthAmountMap.compute(month_name, (key, val) -> (val == null) ? 1 : val + 1);
+    }
+
+    /**
+     * Decrements the monthAmountMap to reflect the number of appointments with a matching month.
+     * @param date Date of the appointment to be mapped
+     */
+    public static void decrementMapMonth(String date) throws ParseException {
+
+        SimpleDateFormat month = new SimpleDateFormat("MMMMM");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy");
+
+        Date fdate = sdf.parse(date);
+        String month_name = month.format(fdate);
+
+        Appointment.monthAmountMap.compute(month_name, (key, val) -> (val != null || val > 0) ? val - 1 : 0);
+
+        if(Appointment.monthAmountMap.get(month_name) == 0){
+            Appointment.monthAmountMap.remove(month_name);
+        }
+    }
+    /**
+     * Increments the typeAmountMap to reflect the number of appointments with a matching type.
+     * @param type Type of appointment to be mapped
+     */
+    private static void incrementMapType(String type){
+        type = type.substring(0, 1).toUpperCase() + type.substring(1).toLowerCase();
+        Appointment.typeAmountMap.compute(type, (key, val) -> (val == null) ? 1 : val + 1);
+    }
+
+    /**
+     * Decrements the typeAmountMap to reflect the number of appointments with a matching type.
+     * @param type Type of appointment to be mapped
+     */
+    private static void decrementMapType(String type){
+        type = type.substring(0, 1).toUpperCase() + type.substring(1);
+        Appointment.typeAmountMap.compute(type, (key, val) -> (val != null || val > 0) ? val - 1 : 0);
+
+        if(Appointment.typeAmountMap.get(type) == 0){
+            Appointment.typeAmountMap.remove(type);
+        }
+    }
+
+    private static void incrementCustomerMap(String customerName){
+        Appointment.customerAmountMap.compute(customerName, (key, val) -> (val == null) ? 1 : val + 1);
+    }
+
+    private static void decrementCustomerMap(String customerName){
+        Appointment.customerAmountMap.compute(customerName, (key, val) -> (val != null || val > 0) ? val - 1 : 0);
+
+        if(Appointment.customerAmountMap.get(customerName) == 0){
+            Appointment.customerAmountMap.remove(customerName);
+        }
     }
 
     /**
@@ -140,6 +222,13 @@ public class Appointment {
         System.out.println("Reloading Appointment.");
         int index = appointmentList.indexOf(appointment);
         Appointment refreshedAppointment = DBQuery.loadAppointment(appointment.getAppointmentId());
+        decrementMapType(appointment.getType());
+        decrementCustomerMap(appointment.getCustomer().getCustomerName());
+        try {
+            decrementMapMonth(appointment.getStartFormatted());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         appointmentList.set(index, refreshedAppointment);
         UpdateAppointmentViewController.setAppointment(refreshedAppointment);
         return true;
@@ -154,6 +243,12 @@ public class Appointment {
     public static boolean removeAppointment(Appointment appointment) {
         if (DBQuery.removeAppointment(appointment)) {
             if (appointmentList.remove(appointment)) {
+                decrementMapType(appointment.getType());
+                decrementCustomerMap(appointment.getCustomer().getCustomerName());
+                try {
+                    decrementMapMonth(appointment.getStartFormatted());
+                } catch (ParseException e) {
+                }
                 System.out.println("The appointment was successfully removed from the appointmentList");
                 return true;
             }
@@ -162,6 +257,37 @@ public class Appointment {
                     "appointmentList");
             return false;
         }
+        return false;
+    }
+
+    /**
+     * Returns false if there is another appointment overlapping the start and end time
+     * @param start the Start time of the appointment
+     * @param end   the end time of the appointment
+     * @return true if there is a conflicting appointment, false if not.
+     */
+    public static boolean hasConflictingTime(Instant start, Instant end){
+        for(Appointment appointment : appointmentList){
+            if(start.isAfter(appointment.getStart()) && start.isBefore(appointment.getEnd())){
+                return true;
+            }
+            if(end.isAfter(appointment.getStart()) && end.isBefore(appointment.getEnd())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasUpcomingAppointment(){
+        Instant now = Instant.now();
+        for(Appointment appointment : Appointment.appointmentList){
+            if(now.until(appointment.getStart(), ChronoUnit.MINUTES) <= 15 && now.until(appointment.getStart(), ChronoUnit.MINUTES) >= 0){
+                System.out.println(now.until(appointment.getStart(), ChronoUnit.MINUTES));
+                UpcomingAppointmentViewController.setAppointment(appointment);
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -185,6 +311,25 @@ public class Appointment {
         return appointmentFilteredListByDate;
     }
 
+    /**
+     * Returns the filtered appointmentList
+     * @return FilteredList(Appointment) appointmentFilteredListByContact
+     */
+    public static FilteredList<Appointment> getAppointmentFilteredListByContact() {
+        return appointmentFilteredListByContact;
+    }
+
+    public static Map<String, Integer> getTypeAmountMap() {
+        return typeAmountMap;
+    }
+
+    public static Map<String, Integer> getMonthAmountMap() {
+        return monthAmountMap;
+    }
+
+    public static Map<String, Integer> getCustomerAmountMap() {
+        return customerAmountMap;
+    }
 
     // GETTER ---------------------------------------------------------------------------------------------------------
 

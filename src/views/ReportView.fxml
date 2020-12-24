@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1170.0" stylesheets="@resources/styles/stylesheet.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ReportViewController">
+   <children>
+      <TableView fx:id="appointmentViewTable" layoutX="14.0" layoutY="217.0" prefHeight="532.0" prefWidth="1130.0" style="-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #2193b0, #6dd5ed);" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+         <columns>
+            <TableColumn fx:id="appointmentIdColumn" prefWidth="75.0" text="Appointment ID" />
+            <TableColumn fx:id="titleColumn" prefWidth="75.0" text="Title" />
+            <TableColumn fx:id="descriptionColumn" prefWidth="75.0" text="Description" />
+            <TableColumn fx:id="locationColumn" prefWidth="75.0" text="Location" />
+            <TableColumn fx:id="contactColumn" prefWidth="75.0" text="Contact" />
+            <TableColumn fx:id="typeColumn" prefWidth="75.0" text="Type" />
+            <TableColumn fx:id="startColumn" prefWidth="75.0" text="Start Date and Time" />
+            <TableColumn fx:id="endColumn" prefWidth="75.0" text="End Date and Time" />
+            <TableColumn fx:id="customerIdColumn" prefWidth="75.0" text="Customer ID" />
+         </columns>
+         <effect>
+            <DropShadow height="9.1" radius="4.79" width="12.06" />
+         </effect>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <Label fx:id="appointmentViewMessageLabel" layoutX="182.0" layoutY="182.0" prefHeight="30.0" prefWidth="961.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="contactLabel" layoutX="23.0" layoutY="149.0" prefHeight="30.0" prefWidth="78.0" text="Contact" underline="true">
+         <font>
+            <Font name="Rockwell" size="18.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="contactComboBox" layoutX="23.0" layoutY="182.0" prefWidth="150.0" promptText="Contact" />
+      <TableView fx:id="typeTableView" layoutX="435.0" layoutY="32.0" prefHeight="150.0" prefWidth="150.0">
+        <columns>
+          <TableColumn fx:id="typeApptAmtColumn" prefWidth="75.0" text="Type" />
+          <TableColumn fx:id="typeAmtColumn" prefWidth="75.0" text="Amount" />
+        </columns>
+      </TableView>
+      <TableView fx:id="monthlyTableView" layoutX="600.0" layoutY="29.0" prefHeight="150.0" prefWidth="150.0">
+         <columns>
+            <TableColumn fx:id="monthColumn" prefWidth="75.0" text="Month" />
+            <TableColumn fx:id="monthAmountColumn" prefWidth="75.0" text="Amount" />
+         </columns>
+      </TableView>
+      <Label fx:id="apptByTypeLabel" layoutX="435.0" layoutY="6.0" prefHeight="23.0" prefWidth="150.0" text="# of appointments by type" underline="true">
+         <font>
+            <Font name="Rockwell" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="apptByMonthLabel" layoutX="600.0" layoutY="6.0" prefHeight="23.0" prefWidth="160.0" text="# of appointments by month" underline="true">
+         <font>
+            <Font name="Rockwell" size="12.0" />
+         </font>
+      </Label>
+      <TableView fx:id="customerTableView" layoutX="760.0" layoutY="32.0" prefHeight="150.0" prefWidth="255.0">
+         <columns>
+            <TableColumn fx:id="customerApptAmtColumn" prefWidth="75.0" text="Customer" />
+            <TableColumn fx:id="customerAmtColumn" prefWidth="75.0" text="Amount" />
+         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <Label fx:id="apptByCustomerLabel" alignment="CENTER" layoutX="760.0" layoutY="6.0" prefHeight="23.0" prefWidth="255.0" text="# of appointments by customer" underline="true">
+         <font>
+            <Font name="Rockwell" size="12.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>

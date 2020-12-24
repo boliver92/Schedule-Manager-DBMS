@@ -6,17 +6,23 @@ import javafx.collections.transformation.FilteredList;
 
 public class Division {
 
-    // Static Variables -----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // Static Variables ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private static ObservableList<Division> divisionList = FXCollections.observableArrayList();
     private static FilteredList<Division> divisionFilteredList = new FilteredList<>(divisionList, s -> false);
 
-    // Instance Variables ---------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // Instance Variables ----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private int divisionId;
     private String divisionName;
     private int countryId;
     private Country country;
 
-    // Constructor ----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // Constructor -----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     public Division(){}
     public Division(int divisionId, String divisionName, int countryId){
         this.divisionId = divisionId;
@@ -29,9 +35,42 @@ public class Division {
         System.out.println("New Division Object: " + this);
     }
 
-    // Instance Methods -----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // INSTANCE METHODS ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
-    // Static Methods -------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
+        // INSTANCE GETTERS --------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the Division object's name
+     * @return  divisionName as String
+     */
+    public String getDivisionName() {
+        return divisionName;
+    }
+
+    /**
+     * Returns the Division object's country
+     * @return  country as Country
+     */
+    public Country getCountry() {
+        return country;
+    }
+
+    /**
+     * Returns the Division object's id
+     * @return  divisionId as int
+     */
+    public int getDivisionId() {
+        return divisionId;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // STATIC METHODS --------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Takes a Division object as an input and adds it to the divisionList. This is required to keep the object
      * persistent and to use the object with methods that utilize the Observablelist.
@@ -41,6 +80,7 @@ public class Division {
     public static boolean addToList(Division division){
         return divisionList.add(division);
     }
+
     /**
      * Prints the String representation of each Division object in the divisionList.
      */
@@ -50,6 +90,7 @@ public class Division {
             System.out.println(division);
         }
     }
+
     /**
      * Searches for and returns a Division object that has a specific division ID.
      * @param   divisionId  int of the division ID to be searched
@@ -63,25 +104,16 @@ public class Division {
         return null;
     }
 
-    // GETTERS --------------------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
+        // STATIC GETTERS ----------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
+
     /**
-     * Returns the Division object's name
-     * @return  divisionName as String
+     * Returns the divisionFilteredList
+     * @return FilteredList(Division) divisionFilteredList
      */
-    public String getDivisionName() {
-        return divisionName;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
     public static FilteredList<Division> getDivisionFilteredList() {
         return divisionFilteredList;
-    }
-
-    public int getDivisionId() {
-        return divisionId;
     }
 
     // Standard Overrides ---------------------------------------------------------------------------------------------

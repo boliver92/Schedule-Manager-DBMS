@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import models.Appointment;
 import models.User;
 import utils.DBConnection;
 import utils.DBQuery;
@@ -45,9 +46,10 @@ public class Main extends Application {
         DBQuery.loadCustomers();
         DBQuery.loadContacts();
         DBQuery.loadAppointments();
-        LanguageHandler.setupLanguageHandler(new Locale("fr"));
+        LanguageHandler.setupLanguageHandler();
         User.setUserLocation();
 
+        System.out.println(Appointment.getTypeAmountMap().keySet() + " " + Appointment.getTypeAmountMap().values());
         // Load main FXML
         launch(args);
     }

@@ -15,7 +15,6 @@ import utils.DBQuery;
 import utils.LanguageHandler;
 import views.resources.styles.Colors;
 import java.net.URL;
-import java.nio.file.attribute.AclEntryFlag;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
@@ -178,7 +177,7 @@ public class UpdateAppointmentViewController implements Initializable {
         apptEndDatePicker.setPromptText(LanguageHandler.getLocaleString("End Date"));
         apptEndTimeComboBox.setPromptText(LanguageHandler.getLocaleString("End Time"));
         updateButton.setText(LanguageHandler.getLocaleString("Update"));
-        returnButton.setText(LanguageHandler.getLocaleString("Return"));
+        returnButton.setText(LanguageHandler.getLocaleString("Return_btn"));
         updateAppUITitleLabel.setText(LanguageHandler.getLocaleString("Update Appointment"));
 
 
@@ -289,6 +288,18 @@ public class UpdateAppointmentViewController implements Initializable {
 
         if(apptCustomerComboBox.getValue() == null){
             uiMessageLabel.setText(LanguageHandler.getLocaleString("Please select a customer"));
+            return false;
+        }
+        Convert dateTime = (date, time) -> ZonedDateTime.of(date.getValue(), LocalTime.parse(TimeFunctions.convertToShort(time.getValue())), ZoneId.of((TimeZone.getDefault().getID()))).toInstant();
+        Instant start = dateTime.toInstant(apptStartDatePicker, apptStartTimeComboBox);
+        Instant end = dateTime.toInstant(apptEndDatePicker, apptEndTimeComboBox);
+        if(start.isAfter(end) || start.equals(end) || end.isBefore(start)){
+            uiMessageLabel.setText(LanguageHandler.getLocaleString("Please check the start and end dates and times"));
+            return false;
+        }
+
+        if(Appointment.hasConflictingTime(start, end)){
+            uiMessageLabel.setText(LanguageHandler.getLocaleString("There is another appointment at this time"));
             return false;
         }
 

@@ -11,252 +11,24 @@ import java.time.format.DateTimeFormatter;
 
 public class DBQuery {
 
-    // READ ---------------------------------------------------------------------------------------------------------
-    public static void loadAppointments(){
-        //Start Connection
-        Connection conn = DBConnection.startConnection();
-
-
-        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM appointments")){
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                Appointment.addToList(
-                    new Appointment(
-                            rs.getInt("Appointment_ID"),
-                            rs.getString("Title"),
-                            rs.getString("Description"),
-                            rs.getString("Location"),
-                            rs.getString("Type"),
-                            rs.getTimestamp("Start").toLocalDateTime().toInstant(ZoneOffset.ofHours(0)),
-                            rs.getTimestamp("End").toLocalDateTime().toInstant(ZoneOffset.ofHours(0)),
-                            rs.getInt("Customer_ID"),
-                            rs.getInt("Contact_ID"),
-                            rs.getInt("User_ID")
-                    )
-                );
-            }
-            Appointment.printAppointmentList();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-        // Close connection
-        DBConnection.closeConnection();
-    }
-    public static Appointment loadAppointment(int appointmentId){
-        //Start Connection
-        Connection conn = DBConnection.startConnection();
-
-
-        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM appointments WHERE Appointment_ID = ?")){
-
-            ps.setInt(1, appointmentId);
-
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()){
-                Appointment returnAppt = new Appointment(
-                            rs.getInt("Appointment_ID"),
-                            rs.getString("Title"),
-                            rs.getString("Description"),
-                            rs.getString("Location"),
-                            rs.getString("Type"),
-                            rs.getTimestamp("Start").toLocalDateTime().toInstant(ZoneOffset.ofHours(0)),
-                            rs.getTimestamp("End").toLocalDateTime().toInstant(ZoneOffset.ofHours(0)),
-                            rs.getInt("Customer_ID"),
-                            rs.getInt("Contact_ID"),
-                            rs.getInt("User_ID")
-                );
-                DBConnection.closeConnection();
-                return returnAppt;
-            }
-
-            return null;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-        // Close connection
-        DBConnection.closeConnection();
-        return null;
-    }
-
-    public static Customer loadCustomer(int customerId){
-        //Start Connection
-        Connection conn = DBConnection.startConnection();
-
-
-        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM customers WHERE Customer_ID = ?")){
-
-            ps.setInt(1, customerId);
-
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()){
-                Customer returnCustomer = new Customer(
-                        rs.getInt("Customer_ID"),
-                        rs.getString("Customer_Name"),
-                        rs.getString("Address"),
-                        rs.getString("Postal_Code"),
-                        rs.getString("Phone"),
-                        rs.getInt("Division_ID")
-                );
-                DBConnection.closeConnection();
-                return returnCustomer;
-            }
-
-            return null;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-        // Close connection
-        DBConnection.closeConnection();
-        return null;
-    }
-    /**
-     * Loads the entries in the contacts table as Contact objects.
-     */
-    public static void loadContacts(){
-        //Start Connection
-        Connection conn = DBConnection.startConnection();
-
-
-        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM contacts")){
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                Contact.addToList(
-                    new Contact(
-                            rs.getInt("Contact_ID"),
-                            rs.getString("Contact_Name"),
-                            rs.getString("Email")
-                    )
-                );
-            }
-            Contact.printContactList();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-        // Close connection
-        DBConnection.closeConnection();
-    }
-    /**
-     * Loads the entries in the countries table as Country objects.
-     */
-    public static void loadCountries(){
-        //Start Connection
-        Connection conn = DBConnection.startConnection();
-
-
-        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM countries")){
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                Country.addToList(
-                    new Country(
-                            rs.getInt("Country_ID"),
-                            rs.getString("Country")
-                    )
-                );
-            }
-            Country.printCountryList();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-        // Close connection
-        DBConnection.closeConnection();
-    }
-    /**
-     * Loads the entries in the Customer table as Customer objects.
-     */
-    public static void loadCustomers(){
-        //Start Connection
-        Connection conn = DBConnection.startConnection();
-
-
-        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM customers")){
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                Customer.addToList(
-                    new Customer(
-                      rs.getInt("Customer_ID"),
-                      rs.getString("Customer_Name"),
-                      rs.getString("Address"),
-                      rs.getString("Postal_Code"),
-                      rs.getString("Phone"),
-                      rs.getInt("Division_ID")
-                    )
-                );
-            }
-            Customer.printCustomerList();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-        // Close connection
-        DBConnection.closeConnection();
-    }
-    /**
-     * Loads the entries in the first_level_divisions table as Division objects.
-     */
-    public static void loadDivisions(){
-        //Start Connection
-        Connection conn = DBConnection.startConnection();
-
-
-        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM first_level_divisions")){
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                Division.addToList(
-                    new Division(
-                            rs.getInt("Division_ID"),
-                            rs.getString("Division"),
-                            rs.getInt("COUNTRY_ID")
-                    )
-                );
-            }
-            Division.printDivisionList();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-        // Close connection
-        DBConnection.closeConnection();
-    }
-
-    // LOGIN VALIDATION ------------------------------------------------------------------------------------------------
-    public static boolean validateLogin(String username, String password){
-        // Start Connection
-        Connection conn = DBConnection.startConnection();
-
-
-        try(PreparedStatement ps = conn.prepareStatement("SELECT User_ID, User_Name FROM users WHERE User_Name = ? AND Password = ?")){
-            ps.setString(1, username);
-            ps.setString(2, password);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                User.setUser(rs.getInt("User_ID"), rs.getString("User_Name"));
-                DBConnection.closeConnection();
-                Logger.logLogin(username, true);
-                return true;
-            }
-            else {
-                DBConnection.closeConnection();
-                Logger.logLogin(username, false);
-                return false;
-            }
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-            System.out.println("Error: " + e.getMessage());
-        }
-        DBConnection.closeConnection();
-        Logger.logLogin(username, false);
-        return false;
-    }
+    // -----------------------------------------------------------------------------------------------------------------
+    // STATIC METHODS --------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     // CREATE ----------------------------------------------------------------------------------------------------------
+
+    /**
+     * Adds a new entry to the appointments table in the database
+     * @param title title
+     * @param description description
+     * @param location location
+     * @param type type
+     * @param start start
+     * @param end end
+     * @param customerId customer ID
+     * @param contactId contact ID
+     * @return true if the appointment was added. Otherwise, false.
+     */
     public static boolean addAppointment(String title, String description, String location, String type, String start,
                                          String end, int customerId, int contactId){
         System.out.println("Database - Adding appointment");
@@ -308,6 +80,16 @@ public class DBQuery {
             return false;
         }
     }
+
+    /**
+     * Adds a new entry to the customers table in the database
+     * @param name name
+     * @param address address
+     * @param division division
+     * @param zipCode zipCode
+     * @param phoneNumber phoneNumber
+     * @return true if the customer was added. Otherwise, false.
+     */
     public static boolean addCustomer(String name, String address, Division division, String zipCode, String phoneNumber){
         System.out.println("Database - Adding appointment");
         Connection conn = DBConnection.startConnection();
@@ -353,65 +135,261 @@ public class DBQuery {
             return false;
         }
     }
-    // DELETE ----------------------------------------------------------------------------------------------------------b
-    public static boolean removeAppointment(Appointment appointment){
-        System.out.println("Attempting to remove appointment object from database: " + appointment);
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // READ -----------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Loads a single entry in the appointments table where the appointmentId is found. The entry is converted into an
+     * Appointment object
+     * @param appointmentId appointmentId of the appointment to be loaded.
+     * @return Appointment object
+     */
+    public static Appointment loadAppointment(int appointmentId){
+        //Start Connection
         Connection conn = DBConnection.startConnection();
 
-        try(PreparedStatement ps = conn.prepareStatement("DELETE FROM appointments WHERE Appointment_ID = ?")){
 
-            ps.setInt(1, appointment.getAppointmentId());
+        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM appointments WHERE Appointment_ID = ?")){
 
-            int rs = ps.executeUpdate();
-            if(rs > 0){
-                System.out.println("Appointment ID# " + appointment.getAppointmentId() + " was removed successfully.");
+            ps.setInt(1, appointmentId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()){
+                Appointment returnAppt = new Appointment(
+                            rs.getInt("Appointment_ID"),
+                            rs.getString("Title"),
+                            rs.getString("Description"),
+                            rs.getString("Location"),
+                            rs.getString("Type"),
+                            rs.getTimestamp("Start").toLocalDateTime().toInstant(ZoneOffset.ofHours(0)),
+                            rs.getTimestamp("End").toLocalDateTime().toInstant(ZoneOffset.ofHours(0)),
+                            rs.getInt("Customer_ID"),
+                            rs.getInt("Contact_ID"),
+                            rs.getInt("User_ID")
+                );
                 DBConnection.closeConnection();
-                return true;
+                return returnAppt;
             }
-            else {
-                System.out.println("Alert: Appointment ID# " + appointment.getAppointmentId() + " removal was unsuccessful!.");
-                DBConnection.closeConnection();
-                return false;
-            }
+
+            return null;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
-        catch (SQLException e){
-            e.printStackTrace();
-            System.out.println("SQL Error (removeAppointment): " + e.getMessage());
-            DBConnection.closeConnection();
-        }
+
+        // Close connection
         DBConnection.closeConnection();
-        return false;
+        return null;
     }
-    public static boolean removeCustomer(Customer customer){
-        System.out.println("Attempting to remove customer object from database: " + customer);
+
+    /**
+     * Loads the entries in the appointments table as Appointment objects.
+     */
+    public static void loadAppointments(){
+        //Start Connection
         Connection conn = DBConnection.startConnection();
 
-        try(PreparedStatement ps = conn.prepareStatement("DELETE FROM customers WHERE Customer_ID = ?")){
 
-            ps.setInt(1, customer.getCustomerID());
+        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM appointments")){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Appointment.addToList(
+                        new Appointment(
+                                rs.getInt("Appointment_ID"),
+                                rs.getString("Title"),
+                                rs.getString("Description"),
+                                rs.getString("Location"),
+                                rs.getString("Type"),
+                                rs.getTimestamp("Start").toLocalDateTime().toInstant(ZoneOffset.ofHours(0)),
+                                rs.getTimestamp("End").toLocalDateTime().toInstant(ZoneOffset.ofHours(0)),
+                                rs.getInt("Customer_ID"),
+                                rs.getInt("Contact_ID"),
+                                rs.getInt("User_ID")
+                        )
+                );
+            }
+            Appointment.printAppointmentList();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
-            int rs = ps.executeUpdate();
-            if(rs > 0){
-                System.out.println("Customer ID# " + customer.getCustomerID() + " was removed successfully.");
-                DBConnection.closeConnection();
-                return true;
-            }
-            else {
-                System.out.println("Alert: Customer ID# " + customer.getCustomerID() + " removal was unsuccessful!.");
-                DBConnection.closeConnection();
-                return false;
-            }
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-            System.out.println("SQL Error (removeAppointment): " + e.getMessage());
-            DBConnection.closeConnection();
-        }
+        // Close connection
         DBConnection.closeConnection();
-        return false;
     }
 
+    /**
+     * Loads the entries in the contacts table as Contact objects.
+     */
+    public static void loadContacts(){
+        //Start Connection
+        Connection conn = DBConnection.startConnection();
+
+
+        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM contacts")){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Contact.addToList(
+                        new Contact(
+                                rs.getInt("Contact_ID"),
+                                rs.getString("Contact_Name"),
+                                rs.getString("Email")
+                        )
+                );
+            }
+            Contact.printContactList();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        // Close connection
+        DBConnection.closeConnection();
+    }
+
+    /**
+     * Loads the entries in the countries table as Country objects.
+     */
+    public static void loadCountries(){
+        //Start Connection
+        Connection conn = DBConnection.startConnection();
+
+
+        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM countries")){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Country.addToList(
+                        new Country(
+                                rs.getInt("Country_ID"),
+                                rs.getString("Country")
+                        )
+                );
+            }
+            Country.printCountryList();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        // Close connection
+        DBConnection.closeConnection();
+    }
+
+    /**
+     * Loads a single entry in the customers table where the customerId is found. The entry is converted into an
+     * Customer object
+     * @param customerId customerId of the customer to be loaded.
+     * @return Customer object
+     */
+    public static Customer loadCustomer(int customerId){
+        //Start Connection
+        Connection conn = DBConnection.startConnection();
+
+
+        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM customers WHERE Customer_ID = ?")){
+
+            ps.setInt(1, customerId);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()){
+                Customer returnCustomer = new Customer(
+                        rs.getInt("Customer_ID"),
+                        rs.getString("Customer_Name"),
+                        rs.getString("Address"),
+                        rs.getString("Postal_Code"),
+                        rs.getString("Phone"),
+                        rs.getInt("Division_ID")
+                );
+                DBConnection.closeConnection();
+                return returnCustomer;
+            }
+
+            return null;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        // Close connection
+        DBConnection.closeConnection();
+        return null;
+    }
+
+    /**
+     * Loads the entries in the Customer table as Customer objects.
+     */
+    public static void loadCustomers(){
+        //Start Connection
+        Connection conn = DBConnection.startConnection();
+
+
+        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM customers")){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Customer.addToList(
+                        new Customer(
+                                rs.getInt("Customer_ID"),
+                                rs.getString("Customer_Name"),
+                                rs.getString("Address"),
+                                rs.getString("Postal_Code"),
+                                rs.getString("Phone"),
+                                rs.getInt("Division_ID")
+                        )
+                );
+            }
+            Customer.printCustomerList();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        // Close connection
+        DBConnection.closeConnection();
+    }
+
+    /**
+     * Loads the entries in the first_level_divisions table as Division objects.
+     */
+    public static void loadDivisions(){
+        //Start Connection
+        Connection conn = DBConnection.startConnection();
+
+
+        try(PreparedStatement ps = conn.prepareStatement("SELECT * FROM first_level_divisions")){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                Division.addToList(
+                    new Division(
+                            rs.getInt("Division_ID"),
+                            rs.getString("Division"),
+                            rs.getInt("COUNTRY_ID")
+                    )
+                );
+            }
+            Division.printDivisionList();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        // Close connection
+        DBConnection.closeConnection();
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
     // UPDATE ---------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Updates an entry in the appointments table with the provided inputs
+     * @param appointment Appointment object representing the entry to be updated
+     * @param title title
+     * @param description description
+     * @param location location
+     * @param type type
+     * @param start start
+     * @param end end
+     * @param customerId customerId
+     * @param contactId contactId
+     * @return true if the entry was updated. Otherwise, false.
+     */
     public static boolean updateAppointment(Appointment appointment, String title, String description, String location,
                                             String type, String start, String end, int customerId, int contactId){
         System.out.println("Database - Updating appointment: " + appointment);
@@ -455,6 +433,17 @@ public class DBQuery {
 
 
     }
+
+    /**
+     * Updates an entry in the customers table with the provided inputs
+     * @param customer Customer object representing the entry to be updated
+     * @param name name
+     * @param address address
+     * @param division division
+     * @param zipCode zipCode
+     * @param phoneNumber phoneNumber
+     * @return true if the entry was updated. Otherwise, false.
+     */
     public static boolean updateCustomer(Customer customer, String name, String address, Division division,
                                          String zipCode, String phoneNumber){
         System.out.println("Database - Updating customer: " + customer);
@@ -494,6 +483,118 @@ public class DBQuery {
         }
 
 
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // DELETE ----------------------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Removes the provided appointment from the appointments database table
+     * @param appointment the Appointment to be removed
+     * @return true if the Appointment was removed. Otherwise, false.
+     */
+    public static boolean removeAppointment(Appointment appointment){
+        System.out.println("Attempting to remove appointment object from database: " + appointment);
+        Connection conn = DBConnection.startConnection();
+
+        try(PreparedStatement ps = conn.prepareStatement("DELETE FROM appointments WHERE Appointment_ID = ?")){
+
+            ps.setInt(1, appointment.getAppointmentId());
+
+            int rs = ps.executeUpdate();
+            if(rs > 0){
+                System.out.println("Appointment ID# " + appointment.getAppointmentId() + " was removed successfully.");
+                DBConnection.closeConnection();
+                return true;
+            }
+            else {
+                System.out.println("Alert: Appointment ID# " + appointment.getAppointmentId() + " removal was unsuccessful!.");
+                DBConnection.closeConnection();
+                return false;
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("SQL Error (removeAppointment): " + e.getMessage());
+            DBConnection.closeConnection();
+        }
+        DBConnection.closeConnection();
+        return false;
+    }
+
+    /**
+     * Removes the provided Customer from the customers database table
+     * @param customer the Customer to be removed
+     * @return true if the Customer was removed. Otherwise, false.
+     */
+    public static boolean removeCustomer(Customer customer){
+        System.out.println("Attempting to remove customer object from database: " + customer);
+        Connection conn = DBConnection.startConnection();
+
+        try(PreparedStatement ps = conn.prepareStatement("DELETE FROM customers WHERE Customer_ID = ?")){
+
+            ps.setInt(1, customer.getCustomerID());
+
+            int rs = ps.executeUpdate();
+            if(rs > 0){
+                System.out.println("Customer ID# " + customer.getCustomerID() + " was removed successfully.");
+                DBConnection.closeConnection();
+                return true;
+            }
+            else {
+                System.out.println("Alert: Customer ID# " + customer.getCustomerID() + " removal was unsuccessful!.");
+                DBConnection.closeConnection();
+                return false;
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("SQL Error (removeAppointment): " + e.getMessage());
+            DBConnection.closeConnection();
+        }
+        DBConnection.closeConnection();
+        return false;
+    }
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // LOGIN VALIDATION -----------------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Validates the login information provided
+     * @param username username
+     * @param password password
+     * @return  true if the username and password were found. Otherwise, false.
+     */
+    public static boolean validateLogin(String username, String password){
+        // Start Connection
+        Connection conn = DBConnection.startConnection();
+
+
+        try(PreparedStatement ps = conn.prepareStatement("SELECT User_ID, User_Name FROM users WHERE User_Name = ? AND Password = ?")){
+            ps.setString(1, username);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                User.setUser(rs.getInt("User_ID"), rs.getString("User_Name"));
+                DBConnection.closeConnection();
+                Logger.logLogin(username, true);
+                return true;
+            }
+            else {
+                DBConnection.closeConnection();
+                Logger.logLogin(username, false);
+                return false;
+            }
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
+        }
+        DBConnection.closeConnection();
+        Logger.logLogin(username, false);
+        return false;
     }
 
 }

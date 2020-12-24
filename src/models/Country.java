@@ -5,14 +5,20 @@ import javafx.collections.ObservableList;
 
 public class Country {
 
-    // Static Variables -----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // Static Variables ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private static ObservableList<Country> countryList = FXCollections.observableArrayList();
 
-    // Instance Variables ---------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // Instance Variables ----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     private int countryID;
     private String country;
 
-    // Constructor ----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // Constructor -----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
     public Country(){}
     public Country(int countryID, String country){
         this.countryID = countryID;
@@ -21,10 +27,35 @@ public class Country {
         System.out.println(this);
     }
 
-    // Instance Methods -----------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+    // INSTANCE METHODS ------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+        // -------------------------------------------------------------------------------------------------------------
+        // INSTANCE GETTERS --------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Returns the Country object's name
+     * @return  country as String
+     */
+    public String getCountryName() {
+        return country;
+    }
 
 
-    // Static Methods -------------------------------------------------------------------------------------------------
+    /**
+     * Returns the Country object's countryId
+     * @return  country as String
+     */
+    public int getCountryID() {
+        return countryID;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // STATIC METHODS --------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Takes a country object as an input and adds it to the countryList. This is required to keep the object
      * persistent and to use the object with methods that utilize the Observablelist.
@@ -34,6 +65,7 @@ public class Country {
     public static boolean addToList(Country country){
         return countryList.add(country);
     }
+
     /**
      * Prints the String representation of each Country object in the contactList.
      */
@@ -43,6 +75,7 @@ public class Country {
             System.out.println(country);
         }
     }
+
     /**
      * Searches for and returns a Country object that has a specific country ID.
      * @param   countryID   int of the country ID to be searched
@@ -56,23 +89,18 @@ public class Country {
         return null;
     }
 
+        // -------------------------------------------------------------------------------------------------------------
+        // STATIC GETTERS ----------------------------------------------------------------------------------------------
+        // -------------------------------------------------------------------------------------------------------------
 
-    // GETTERS --------------------------------------------------------------------------------------------------------
     /**
-     * Returns the Country object's name
-     * @return  country as String
+     * Returns the countryList containing the Country objects
+     * @return ObservableList(Country) countryList
      */
-    public String getCountryName() {
-        return country;
-    }
-
     public static ObservableList<Country> getCountryList() {
         return countryList;
     }
 
-    public int getCountryID() {
-        return countryID;
-    }
 
     // STANDARD OVERRIDES ---------------------------------------------------------------------------------------------
     @Override
